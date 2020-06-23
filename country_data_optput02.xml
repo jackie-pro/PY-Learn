@@ -1,0 +1,21 @@
+<data>
+    <country name="愛爾蘭">
+        <rank>4</rank>
+        <year>2017</year>
+        <gdppc>70638</gdppc>
+        <neighbor direction="北" name="英國" />
+    </country>
+    <country name="新加坡">
+        <rank>8</rank>
+        <year>2017</year>
+        <gdppc>57713</gdppc>
+        <neighbor direction="北" name="馬來西亞" />
+    </country>
+    <country name="巴拿馬">
+        <rank>68</rank>
+        <year>2011</year>
+        <gdppc>13600</gdppc>
+        <neighbor direction="西" name="哥斯大黎加" />
+        <neighbor direction="東" name="哥倫比亞" />
+    </country>
+</data>

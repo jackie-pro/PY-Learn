@@ -1,0 +1,260 @@
+#flash {
+	background: url(flash/TopBannerBG.gif) no-repeat;
+	width: 1000px; height: 203px;
+	position: relative;
+}
+#words1, #words2, #words3 {position: absolute; opacity: 0; left: 0; top: 85px;}
+
+/************************/
+.shadow01 {
+	background-image: url(images/new_csf_01.jpg);
+	background-repeat: repeat-y;
+}
+.shadow02 {
+	background-image: url(images/new_csf_03.jpg);
+	background-repeat: repeat-y;
+}
+.leftmenu01 {
+	font-size: 10pt;
+	font-style: normal;
+	line-height: 15pt;
+	color: #666;
+	border-collapse:collapse
+	/*text-indent: 5pt;*/
+}
+.leftmenu01 a:link{
+	color: #666;
+	text-decoration: none;
+}
+.leftmenu01 a:visited {
+	color: #666;
+	text-decoration: none;
+}
+.leftmenu01 a:hover {
+	color: #1b5988;
+	text-decoration: none;
+}
+.leftmenu02 {
+	line-height: 1px;
+	word-spacing: 50pt;
+}
+
+.banner01 {
+	background-image: url(images/new_csf_17.jpg);
+	background-repeat: repeat-y;
+}
+.down01 {
+	background-image: url(images/new_csf_20.jpg);
+	height:95px;
+	background-repeat: repeat-y;
+	font-size: 9pt;
+	line-height: 12pt;
+}
+.down01 a:link{
+	color: #000;
+	text-decoration: none;
+}
+.down01 a:visited {
+	color: #000;
+	text-decoration: none;
+}
+.down01 a:hover {
+	color: #1b5988;
+	text-decoration: none;
+}
+.down02 {
+	font-size: 9pt;
+	color: #FFF;
+}
+.mail01 {
+	font-size: 9pt;
+	line-height: 12pt;
+	color: #FFF;
+}
+.mail01 a:link{
+	color: #FFF;
+	text-decoration: none;
+}
+.mail01 a:visited {
+	color: #FFF;
+	text-decoration: none;
+}
+.mail01 a:hover {
+	color: #CCC;
+	text-decoration: none;
+}
+.newtitle {
+	font-size: 12pt;
+	color: #122546;
+	font-weight: bold;
+	line-height: 20pt;
+}
+.newtitle02 {
+	font-size: 8pt;
+	color: #5c5c5c;
+	font-weight: bold;
+	line-height: 20pt;
+}
+.context{
+	text-align: justify;
+	text-justify:inter-ideograph;
+	font-size: 9pt;
+	line-height: 20px;
+}
+
+.content01 {
+	font-family: "新細明體";
+	font-size: 12px;
+	color: 333333;
+	line-height: 20px;
+	/*text-decoration: none;*/
+	letter-spacing: 1px;
+}
+.content01 a {
+	font-family: "新細明體";
+	font-size: 12px;
+	color: 333333;
+	line-height: 20px;
+	text-decoration: underline ;
+	letter-spacing: 1px;
+}
+.content02 {
+	font-family: "新細明體";
+	font-size: 12px;
+	color: #003366;
+	text-decoration: none;
+	line-height: 20px;
+	letter-spacing: 1px;
+}
+
+.title01 {
+	font-family: "新細明體";
+	font-size: 13px;
+	color: #3198b4;
+	font-weight: bold;
+	text-decoration: none;
+}
+.title02 {
+	font-family: "新細明體";
+	font-size: 15px;
+	font-weight: bold;
+	color: #165CD1;
+	text-decoration: none;
+}
+.title02 a {
+	font-family: "新細明體";
+	font-size: 15px;
+	font-weight: bold;
+	color: #165CD1;
+}
+.title03 {
+	font-family: "新細明體";
+	font-size: 11px;
+	line-height: 20px;
+	color: #3366FF;
+	text-decoration: underline;
+	word-spacing: 1px;
+}
+.title_Bfont11 {
+	font-size: 10pt;
+	line-height: 15pt;
+	color: #FFFFFF;
+	padding-top: 2px
+}
+.title4 {	color: #777777;font-size:12px;line-height:30px; }
+
+.new01 {
+	font-size: 10pt;
+	line-height: 12pt;
+	color: #363636;
+}
+.new01 a {
+	font-size: 10pt;
+	line-height: 12pt;
+	color: #363636;
+	
+}
+.title4 {
+	color: #ab6207;
+	font-size:13px;
+	line-height:22px;
+}
+/*文章內圖片加框線*/
+.entry img {
+        background: #FFFFFF;
+        color: #000000;
+        border: 1px solid #CCCCCC;
+        padding: 4px;
+}
+/*圖片加說明********************************/
+.entry .img-caption {
+	background:#F7F7F7;
+	border:1px solid #CCC;
+	padding:5px 0;
+	margin-bottom:5px;
+	text-align:center;
+}
+.entry .img-caption img {
+        background: #FFFFFF;
+        color: #000000;
+        border: 0px;
+        padding: 0px;
+}
+.entry .img-caption p {
+        margin:0;
+}
+.table_tira02 {
+	background-color: #E9E2DA;
+	margin: 0px;
+	left: 0px;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	border-bottom-style: dashed;
+	border-bottom-width: 1px;
+	border-bottom-color: #bba79d;
+	font-weight: bold;
+	padding-top: 2px;
+	padding-right: 2px;
+	padding-bottom: 2px;
+	padding-left: 5px;
+}
+.news {}
+.news td{    color:#464646; border-bottom:1px dashed #bba79d; text-decoration: none; padding:5px 0 5px 0; }
+#about_title {
+	font-size: 18px;
+	font-weight: bold;
+}
+.pho01 {	background-color: #FFFFFF;
+	padding: 2px;
+	border: 1px solid #CCCCCC;	
+}
+
+
+/*******隱私權政策*******/
+#privacy h1 {
+	font-size: 18px;
+	font-weight: bold;
+	color: #555;
+	padding:10px 18px;
+	margin-top:20px;
+}
+#privacy h2 {
+	font-size: 15px;
+	font-weight: bold;
+	color: #165CD1;
+	background:url(images/icon_05.gif) 2px no-repeat;
+	padding-left:18px;
+}
+#privacy p {
+	text-indent:2em;
+}
+#privacy .list {
+	list-style-type:none;
+	text-indent:-2.1em;
+}
+#privacy .list ol {
+	list-style-type:decimal;
+	text-indent:0;
+	margin-left:-1.5em;;
+}
