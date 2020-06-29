@@ -2693,13 +2693,349 @@ print(s)
     .直方圖
 
 #===
-#直方圖
+
+#20200624
+"""
+鳶尾花專案
+1.網頁資料擷取:
+=>下載資料,轉成所需格式,如轉換為Pandas之DataFrme,轉存為csv檔
+=>可先行將資料讀取並印出,了解資料內容包含的項目
+
+2.視覺化分析資料:
+=>繪製各式圖表
+  ->直方圖(直條圖):
+      呈現不同區塊資料集分佈狀況
+      每個長條代表不同範圍中數值高低
+  ->散點圖(散佈圖):
+      呈現X軸/Y軸上兩變數之變化趨勢
+      某一變數是否受另一變數的影響
+      .必須要有2組變數才能做
+      .資料點的散佈形態越趨近於直線,代表2變數之間關連性越強
+  ->密度圖(核密度估計圖):
+      將數據中估計的直方圖平滑化
+      每個單獨的數據點繪製連續曲線
+      稱為內核(常用內核為高斯)=>鐘形曲線
+      ."呈現每一組數據本身分佈狀況"=>重點
+       X軸為變量的值,每一個值代表一個數據點
+       Y軸為核密度估計之機率密度函數
+  ->盒鬚圖(箱型圖,K線圖):
+      呈現數據分佈
+  ->直條圖:
+      三種品種各自四個特徵值
+  ->堆疊圖:
+      在總和不具重要性之情況下,呈現個別資料與整體資料
+      之間的關係及資料在特定時間範圍內的變化趨勢
+  ->橫條圖:
+      類似直條圖
+
+3.由視覺化圖表產生分析結構(報告):
+    經營方針
+    產品 成本 單項 分析結果(從而訂定 經營方針)
+
+4.以不同的方式進行細部分析
+  =>機器學習 machine learning
+  =>Scikit-learn(sklearn)
+  機器學習:計算機藉由經驗累積,提高自動化效能
+  
+  人工智慧(AI)
+      |
+   機器學習
+      |
+   深度學習
+  =>Scikit-learn:
+      Numpy、Pandas、Scipy、matpoltlib......
+      ->Scikit-learn主要功能:
+          .測試資料集
+          .特徵篩選
+          .特徵提取
+          .聚類(將為標記資料分類)
+          .演算法(監督式、非監督式學習...)
+          .驗證(交叉)
+      ->Scikit-learn常用演算法:
+          .分類:Classification
+          .回歸:Regression
+          .聚類:Clustering
+
+補充:
+    以線性迴歸分析鳶尾花資料集
+    
+"""
+#===
+ex:#直方圖(直條圖)
 import pandas
 
 url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
-names = ['sepal_length', 'speal_width', 'petal_length', 'petal_width', 'class']
+names = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'class']
 dataset = pandas.read_csv(url, names = names)
 print(dataset.describe())
 dataset.hist()
 
-#===   
+
+#===
+ex: #散點圖(散佈圖)
+
+import pandas
+
+url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
+names = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'class']
+#把鳶尾花的特徵設定為串列,設定給names變數
+dataset = pandas.read_csv(url, names = names)
+#把網頁資料載入,把鳶尾花的特徵names變成參數轉成csv檔 #dataset就是
+print(dataset.describe())
+dataset.plot(x = 'sepal_length', y = 'sepal_width', kind = 'scatter')
+                                                    #^ kind ->繪圖種類
+                    
+#===
+ex: #密度圖(核密度估計圖)
+
+import pandas
+
+url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
+names = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'class']
+#把鳶尾花的特徵設定為串列,設定給names變數
+dataset = pandas.read_csv(url, names = names)
+#把網頁資料載入,把鳶尾花的特徵names變成參數轉成csv檔 #dataset就是
+print(dataset.describe())
+dataset.plot(kind = 'kde')
+                                                   
+                                                          
+#=== 
+ex: #盒鬚圖(箱型圖,K線圖)
+
+import pandas
+
+url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
+names = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'class']
+#把鳶尾花的特徵設定為串列,設定給names變數
+dataset = pandas.read_csv(url, names = names)
+#把網頁資料載入,把鳶尾花的特徵names變成參數轉成csv檔 #dataset就是
+print(dataset.describe())
+dataset.plot(kind = 'box', subplots = True, layout = (2,2),sharex = False, sharey = False)
+#dataset.plot(kind = 'box', subplots = True, layout = (2,2),sharex = True, sharey = True)
+                                                            #^sharex,Y => 每一個子圖是不是要分享X,Y座標                 
+                                                                                                  
+#=== 
+ex: #散點圖(散佈圖)=>用csv檔當來源
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+colName = ['sepal_len', 'sepal_wd', 'petal_len', 'petal_wd', 'species']
+iris = pd.read_csv(r'C:\GitHub\python\PY-Learn\iris.csv', names = colName)
+
+plt.plot(iris['sepal_len'], iris['sepal_wd'], '*', color = 'g')
+#要繪圖的參數
+plt.xlabel('Sepal Length')
+plt.ylabel('Sepal Width')
+plt.title('Iris Sepal length and width anslysis')
+plt.show()
+
+
+#=== 
+ex: #直方圖(直條圖)=>用csv檔當來源
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+colName = ['sepal_len', 'sepal_wd', 'petal_len', 'petal_wd', 'species']
+iris = pd.read_csv(r'C:\GitHub\python\PY-Learn\iris.csv', names = colName)
+
+iris_mean = iris.groupby('species', as_index = False).mean()
+iris_mean.plot(kind = 'bar')
+plt.xticks(iris_mean.index, iris_mean['species'], rotation = 0)
+
+plt.show()
+
+
+#=== 
+ex:#額外範例:解釋 groupby
+import pandas as pd
+df = pd.DataFrame(data = {'books':['b1','b1','b1','b2','b2','b3'], 'price':[12,12,12,15,15,17]})
+print(df)
+print()
+print(df.groupby('books', as_index = True).sum())
+print()
+print(df.groupby('books', as_index = False).sum())
+
+
+#=== 
+ex: #直方圖(直條圖)=>用csv檔當來源
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+colName = ['sepal_len', 'sepal_wd', 'petal_len', 'petal_wd', 'species']
+iris = pd.read_csv(r'C:\GitHub\python\PY-Learn\iris.csv', names = colName)
+
+iris['species'] = iris['species'].apply(lambda x: x.replace("Iris-",""))
+                                                  #^把標題的不需要字串用空字號取代       
+iris_mean = iris.groupby('species', as_index = False).mean()
+iris_mean.plot(kind = 'bar')
+plt.xticks(iris_mean.index, iris_mean['species'], rotation = 0)
+
+plt.show()
+
+
+#=== 
+ex: #堆疊圖=>用csv檔當來源
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+colName = ['sepal_len', 'sepal_wd', 'petal_len', 'petal_wd', 'species']
+iris = pd.read_csv(r'C:\GitHub\python\PY-Learn\iris.csv', names = colName)
+
+iris['species'] = iris['species'].apply(lambda x: x.replace("Iris-",""))                                           
+iris_mean = iris.groupby('species', as_index = False).mean()
+iris_mean.plot(kind = 'bar', stacked = True)
+                              #^堆疊
+plt.xticks(iris_mean.index, iris_mean['species'], rotation = 0)
+
+plt.show()
+
+
+#=== 
+ex: #橫條圖=>用csv檔當來源
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+colName = ['sepal_len', 'sepal_wd', 'petal_len', 'petal_wd', 'species']
+iris = pd.read_csv(r'C:\GitHub\python\PY-Learn\iris.csv', names = colName)
+
+iris['species'] = iris['species'].apply(lambda x: x.replace("Iris-",""))                                           
+iris_mean = iris.groupby('species', as_index = False).mean()
+iris_mean.plot(kind = 'barh', stacked = True)
+                       #^水平    
+plt.xticks(iris_mean.index, iris_mean['species'], rotation = 0)
+
+plt.show()
+
+#======================================================
+ 由sklearn套件載入datasets模組，並讀入digits資料
+#======================================================
+ex:
+from sklearn import datasets
+digits = datasets.load_digits()
+print(digits)
+
+ex:
+
+import pandas as pd
+
+digits = pd.read_csv("http://archive.ics.uci.edu/ml/machine-learning-databases/optdigits/optdigits.tra", header = None)
+
+print(digits)
+
+
+ex:
+
+from sklearn import datasets
+import matplotlib.pyplot as plt
+
+digits = datasets.load_digits()
+
+fig = plt.figure(figsize=(4, 2))
+#^設定子圖形數量
+fig.subplots_adjust(left = 0, right = 1, bottom = 0, top = 1, hspace = 0.05, wspace = 0.05)
+#^調整子圖環境參數、位置、間距
+for i in range(8):
+    ax = fig.add_subplot(2, 4, i + 1, xticks = [], yticks = [])
+         #^加入子圖形裡    ^2*4網格 ^位置         ^把座標軸刻度關閉
+    ax.imshow(digits.images[i], cmap = plt.cm.binary)
+               #^顯示圖形        ^灰階
+    ax.text(0, 7, str(digits.target[i]))
+plt.show()
+
+
+ex:
+
+from sklearn import datasets
+import matplotlib.pyplot as plt
+digits = datasets.load_digits()
+images_and_labels = list(zip(digits.images, digits.target))
+for i, (image, label) in enumerate(images_and_labels[:8]):
+    
+    plt.subplot(2, 4, i + 1)
+    plt.axis('off')
+    plt.imshow(image, cmap = plt.cm.binary)
+    plt.title('Training: ' + str(label))
+plt.show()
+
+#======================================================
+ex:
+from sklearn.datasets import load_iris
+hua = load_iris()
+
+x = [n[0] for n in hua.data]
+y = [n[1] for n in hua.data]
+
+import numpy as np
+x = np.array(x).reshape(len(x), 1)
+y = np.array(y).reshape(len(y), 1)
+from sklearn.linear_model import LinearRegression #線性回歸
+
+clf = LinearRegression()
+clf.fit(x, y)
+#fit() -> 資料型態為array -> 訓練
+pre = clf.predict(x)
+
+import matplotlib.pyplot as plt
+plt.scatter(x, y, s = 100)
+plt.plot(x, pre, "r-", linewidth = 4)
+for idx, m in enumerate(x):
+    plt.plot([m, m], [y[idx], pre[idx]], 'g-')
+    #若依花萼長5.0,預測花萼長度為?
+    
+print(clf.predict([[5.0]]))
+
+#============================
+"""
+影像運算
+
+=>影像加法運算
+  ->灰階影像中,像素以8位元表示,像素值範圍為0~255
+  ->影像加法:
+      兩影像對應的像素值相加 <= 255   -> 直接相加
+      兩影像對應的像素值相加 > 255    -> 將相加結果mod 256 得出結果
+                                        (255+58) % 256 = 57
+      .add():影像像素相加
+       格式: cv2.add(影像1 + 影像2) ->直接設定為飽和值255
+"""
+ex:
+
+import numpy as np
+img1 = np.random.randint(0, 256, size = [3, 3], dtype = np.uint8)
+img2 = np.random.randint(0, 256, size = [3, 3], dtype = np.uint8)
+print('img1 = \n', img1)
+print('img2 = \n', img1)
+print('img1 + img2 = \n', img1 + img2)
+
+
+ex:
+import cv2 as cv
+import numpy as np
+img1 = np.random.randint(0, 256, size = [3, 3], dtype = np.uint8)
+img2 = np.random.randint(0, 256, size = [3, 3], dtype = np.uint8)
+print('img1 = \n', img1)
+print('img2 = \n', img1)
+img3 = cv.add(img1,img2)
+print('cv.add(img1,img2) = \n', img3)
+
+
+ex:
+    
+import cv2 as cv
+img = cv.imread(r'C:\GitHub\python\PY-Learn\Lena.jpg', 0)
+a = img 
+result1 = a + img
+result2 = cv.add(img, a)
+cv.imshow('imge', img)
+cv.imshow('imge1', result1)
+cv.imshow('imge2', result2)
+cv.waitKey()
+                                        
+
+
+
+
