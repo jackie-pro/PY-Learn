@@ -131,7 +131,7 @@ main()
 #==============
 
 
-.sort()函式:串列排序  #依UNICON碼由小到大
+
 
 #處理公告歷史油價紀錄=======
 def main():
@@ -175,15 +175,16 @@ with open(r'C:\GitHub\python\PY-Learn\oil-project\score-new.csv','r',encoding = 
         print(row[0]+" "+row[1]+" "+row[2]+" "+row[3]+" "+row[4])
 
 
+
+
 def main():
-    import csv
+    #import csv
     import pandas as pd
-    infile = open(r'D:\aaa\GitHub\PY-Learn\oil-project\score.txt','r',encoding = 'utf8')
-    infile1 = open(r'D:\aaa\GitHub\PY-Learn\oil-project\score.txt','r',encoding = 'utf8')
-    line = infile.readline()
+    
+    infile1 = open(r'C:\GitHub\python\PY-Learn\oil-project\score.txt','r',encoding = 'utf8')
     line3 = infile1.readline()
-    outfile = open(r'D:\aaa\GitHub\PY-Learn\oil-project\score-new-1.txt','w', encoding = 'utf8')
-    tempfile = open(r'D:\aaa\GitHub\PY-Learn\oil-project\score-new-temp.txt','w', encoding = 'utf8')
+   
+    tempfile = open(r'C:\GitHub\python\PY-Learn\oil-project\score-new-temp.txt','w', encoding = 'utf8')
     title1 = ['下次加油累積公里數']
     tempfile.write('%s \n' % title1[0])
     while line3 != '': #製作 下次加油累積公里數 暫存檔
@@ -194,16 +195,16 @@ def main():
         print('下次加油累積公里數 = ',sumkm1)
         tempfile.write('%s \n' % sumkm1)
         line3 = infile1.readline()
-        infile1.close()
-        tempfile.close()
-        df = pd.read_csv(r'D:\aaa\GitHub\PY-Learn\oil-project\score-new-temp.txt',encoding = 'utf8')
-        print(df)
-        df1 = df.drop(df.index[0]) #去掉第一個
-        print(df1)
-        df1.to_csv(r'D:\aaa\GitHub\PY-Learn\oil-project\score-new-temp1.txt',encoding='utf8',)
-        df2 = open(r'D:\aaa\GitHub\PY-Learn\oil-project\score-new-temp1.txt','r',encoding='utf8',)
-        line1 = df2.readline()
-        temp2file = open(r'D:\aaa\GitHub\PY-Learn\oil-project\score-new-temp2.txt','w', encoding = 'utf8')
+    infile1.close()
+    tempfile.close()
+    df = pd.read_csv(r'C:\GitHub\python\PY-Learn\oil-project\score-new-temp.txt',encoding = 'utf8')
+    print(df)
+    df1 = df.drop(df.index[0]) #去掉第一個
+    print(df1)
+    df1.to_csv(r'C:\GitHub\python\PY-Learn\oil-project\score-new-temp1.txt',encoding='utf8',)
+    df2 = open(r'C:\GitHub\python\PY-Learn\oil-project\score-new-temp1.txt','r',encoding='utf8',)
+    line1 = df2.readline()
+    temp2file = open(r'C:\GitHub\python\PY-Learn\oil-project\score-new-temp2.txt','w', encoding = 'utf8')
     while line1 != '': #製作 下次加油累積公里數 暫存檔-乾淨狀態
         print(line1)
         data2 = line1.split(',')
@@ -214,9 +215,12 @@ def main():
         line1 = df2.readline()
     df2.close()
     temp2file.close()
-    df3 = open(r'D:\aaa\GitHub\PY-Learn\oil-project\score-new-temp2.txt','r', encoding = 'utf8')
+    df3 = open(r'C:\GitHub\python\PY-Learn\oil-project\score-new-temp2.txt','r', encoding = 'utf8')
     line2 = df3.readline() #把 下次加油累積公里數 暫存檔 的標頭 先讀取掉 不用
     print(line2)
+    infile = open(r'C:\GitHub\python\PY-Learn\oil-project\score.txt','r',encoding = 'utf8')
+    line = infile.readline()
+    outfile = open(r'C:\GitHub\python\PY-Learn\oil-project\score-new-1.txt','w', encoding = 'utf8')
     #title = ['加油日期','累積公里數','加油費用','加油公升數','95無鉛汽油油價','下次加油累積公里數','行駛公里數','油耗','每公里費用']
     #outfile.write('%s,%s,%s,%s,%s,%s,%s,%s,%ss \n' % (title[0],title[1],title[2],title[3],title[4],title[5],title[6],title[7],title[8]))
     while line != '':
@@ -251,18 +255,18 @@ def main():
             lit = eval(b[1]) #加油公升數 (liter) 轉成整數
             print('加油公升數 = ',lit)
             plop = op / lit      #每公升油價 (per liter of oil price)
-            print('每公升油價 = %.1f' % plop)
+            print('每公升油價 = %.2f' % plop)
         line2 = df3.readline() #取出下次加油累積公里數
-        nextkm = eval(line4) #轉成整數
+        nextkm = eval(line2) #轉成整數
         print('下次加油累積公里數 = %s' % nextkm)
         nowkm = nextkm - sumkm #計算出行駛公里數
         print('行駛公里數 = %s' % nowkm)
         oilavg = nowkm / lit #算出油耗
-        print('油耗 = %.1f' % oilavg)
+        print('油耗 = %.2f' % oilavg)
         cpk = op / nowkm #算出每公里費用
-        print('每公里費用 = %.1f' % cpk)
-        print('%s,%s,%.1f,%.1f \n' % (year,plop,oilavg,cpk))
-        outfile.write('%s,%s,%.1f,%.1f \n' % (year,plop,oilavg,cpk))
+        print('每公里費用 = %.2f' % cpk)
+        print('%.2f,%.2f,%.2f,%s \n' % (plop,oilavg,cpk,year))
+        outfile.write('%.2f,%.2f,%.2f,%s \n' % (plop,oilavg,cpk,year))
         line = infile.readline()
     df3.close()
     infile.close()
@@ -273,12 +277,12 @@ main()
 import pandas as pd
 import matplotlib.pyplot as plt
 
-colName = ['year','plop','oilavg','cpk']
-oilcost = pd.read_csv(r'D:\aaa\GitHub\PY-Learn\oil-project\score-new-1.txt', encoding = 'utf8', names = colName)
+colName = ['plop','oilavg','cpk']
+oilcost = pd.read_csv(r'C:\GitHub\python\PY-Learn\oil-project\score-new-1.txt', encoding = 'utf8', names = colName)
 
-oilcost_mean = oilcost.groupby('year', as_index = False).mean()
+oilcost_mean = oilcost.groupby('cpk', as_index = False).mean()
 oilcost_mean.plot(kind = 'bar')
-plt.xticks(oilcost_mean.index, oilcost_mean['year'], rotation = 0)
+plt.xticks(oilcost_mean.index, oilcost_mean['cpk'], rotation = 0)
 plt.show()
 
 #['加油日期','累積公里數','加油費用','加油公升數','95無鉛汽油油價','下次加油累積公里數','行駛公里數','油耗','每公里費用']
