@@ -4,8 +4,8 @@ Created on Wed Jul  1 09:25:20 2020
 
 @author: Jackie
 """
-
-
+#===============================
+#1.處理原始資料
 def main():
     #import csv
     import pandas as pd
@@ -24,8 +24,7 @@ def main():
         tempfile.write('%s \n' % sumkm1)
         line1 = infile1.readline()
     infile1.close()
-    tempfile.close()
-    
+    tempfile.close()  
     df = pd.read_csv(r'C:\GitHub\python\PY-Learn\oil-project\score-new-temp.txt',encoding = 'utf8')
     print(df)
     df1 = df.drop(df.index[0]) #去掉第一個
@@ -43,8 +42,7 @@ def main():
         temp2file.write('%s' % sumkm2)
         line2 = df2.readline()
     df2.close()
-    temp2file.close()
-    
+    temp2file.close()    
     infile = open(r'C:\GitHub\python\PY-Learn\oil-project\score.txt','r',encoding = 'utf8')
     line = infile.readline()
     outfile = open(r'C:\GitHub\python\PY-Learn\oil-project\score-new-1.txt','w', encoding = 'utf8')
@@ -115,348 +113,178 @@ def main():
 main()
 
 #=======================
+#2.合併數字
 import csv
 import pandas as pd
 csvfile = pd.read_csv(r'C:\GitHub\python\PY-Learn\oil-project\score-new-2.csv', encoding = 'utf8')
+csvsum = csvfile.groupby(['year']).sum() #合併種類的名稱，並且顯示該名稱欄位的所有數量總合
+csvsum.to_csv(r'C:\GitHub\python\PY-Learn\oil-project\score-new-2-temp.csv',encoding='utf8',)
+print(csvsum)
 
-while line != '':
-dfTotal=csvfile.groupby(['year']).sum() 
-#合併種類的名稱，並且顯示該名稱欄位的所有數量總合
-#dfTotal.sum() 
-print(dfTotal)
-dfTotal.to_csv(r'C:\GitHub\python\PY-Learn\oil-project\score-new-3.csv',encoding='utf8',)
+csvRows = []
+csvFileObj = open(r'C:\GitHub\python\PY-Learn\oil-project\score-new-2-temp.csv', 'r' ,encoding='utf8')
+readerObj = csv.reader(csvFileObj)
+for row in readerObj:
+	if readerObj.line_num == 1:
+		continue	# skip first row
+	csvRows.append(row)
+csvFileObj.close()
+ 
+csvFileObj1  = open(r'C:\GitHub\python\PY-Learn\oil-project\score-new-3.csv','w', encoding='utf8',newline='')
+csvWriter = csv.writer(csvFileObj1)
+for row in csvRows:
+    if any(field.strip() for field in row):
+        csvWriter.writerow(row)
+csvFileObj.close()
+csvFileObj1.close()
 #=======================
-#=======================
-#import csv
-#import pandas as pd
+#3.處理所需資料
+#====================
+infile = open(r'C:\GitHub\python\PY-Learn\oil-project\score-new-3.csv',encoding='utf8')
+line = infile.readline()
+outfile = open(r'C:\GitHub\python\PY-Learn\oil-project\score-new-3.txt','w', encoding = 'utf8')
+outfile1 = open(r'C:\GitHub\python\PY-Learn\oil-project\score-new-4.txt','w', encoding = 'utf8')
+#==算出6年以來所有相關機車維修保養險費用
 sumfile = open(r'C:\GitHub\python\PY-Learn\oil-project\score-cost.txt','r', encoding = 'utf8')
-line = sumfile.readline()
+linea = sumfile.readline()
 sumcost = 0
-while line != '':
-    print(line)
-    data = line.split('\n')
+while linea != '':
+    print(linea)
+    data = linea.split('/n')
     print('data = ',data)
     cost = eval(data[0])
     sumcost += cost
-    line = sumfile.readline()
+    linea = sumfile.readline()
 sumfile.close()
-yavgcost = sumcost / 6
-print ('六年總計 =',sumcost)
-print ('一年平均 = %d' % yavgcost)
-
-
-#=======================
-
-
-infile = open(r'C:\GitHub\python\PY-Learn\oil-project\score-new-3.csv',encoding='utf8',)
-line = infile.readline()
-outfile = open(r'C:\GitHub\python\PY-Learn\oil-project\score-new-3.txt','w', encoding = 'utf8')
+print('六年維修保養險費用總計 =',sumcost)
+#====================
 while line != '':
-        #print(line)
-        data = line.split(',')
-        #print('data = ',data)
-        year = eval(data[0]) #取出日期
-        print('加油年份= %s 年' % year)
-        nowkm = eval(data[1])
-        print('年總行駛公里數 = %s 公里' % nowkm)
-        lit = eval(data[2])   # 取出加油油價與公升數資料
-        print('年總加油公升數 = %.1f 公升' % lit)
-        op = eval(data[3])
-        print('年總加油費用 = %s NTD' % op)
-        oilavg = nowkm / lit
-        print('平均油耗 = 每公升跑 %.1f 公里' % oilavg)
-        cpk = op / nowkm
-        print('每公里費用 = %.1f NTD' % cpk)
-        motfixcotavg = 23,218 / 6#
-        print('平均6年多來機車維修保養稅險費用 = %.1f NTD' % motfixcotavg)
-        if year >= 2014 and year <= 2016:
-            km = 32 #到內湖公司公里數
-            print('每天 騎機車 至 內湖區 上下班公里數 = %d 公里' % km)
-            dcost = km * cpk #一天油費
-            print('每天 騎機車 至 內湖區 上下班費用 = %.1f NTD' % dcost)
-            time = 50 * 2    #騎車花費時間
-            print('每天 騎機車 至 內湖區 上下班花費時間 = %d 分鐘' % time)
-            mrt = 40 * 0.8 * 2 #捷運三民高中站到 捷運西湖站
-            print('每天 搭捷運 至 內湖區 上下班費用 = %d NTD' % mrt)
-            mtime = 80 * 2      #走路捷運全程花費時間
-            print('每天 搭捷運 至 內湖區 上下班花費時間 = %d 分鐘' % mtime)
-            cot = mrt - dcost   #騎機車比搭捷運日省費用
-            print('每天 騎機車 比 搭捷運 至 內湖區 上下班省費 = %.1f NTD' % cot)
-            cti = mtime - time  #騎機車比搭捷運日省時
-            print('每天 騎機車 比 搭捷運 至 內湖區 上下班省時 = %d 分鐘' % cti)
-            ywork = 200       #一年預計上班日200天
-            print('一年上班天數 = 以 %d 天計算' % ywork)
-            ycot = cot * ywork #一年省錢
-            print('每年 騎機車 比 搭捷運 至 內湖區 上下班省費 = %.1f NTD' % ycot)
-            ytime = cti * ywork / 60 #一年省時
-            print('每年 騎機車 比 搭捷運 至 內湖區 上下班省時 = %.1f 小時' % ytime)
-        elif year >= 2017 and year <= 2019:
-            km = 26 #到信義公司公里數
-            print('每天 騎機車 至 信義區 上下班公里數 = %d 公里' % km)
-            dcost = km * cpk #一天油費
-            print('每天 騎機車 至 信義區 上下班費用 = %.1f NTD' % dcost)
-            time = 50 * 2    #騎車花費時間
-            print('每天 騎機車 至 信義區 上下班花費時間 = %d 分鐘' % time)
-            mrt = 35 * 0.8 * 2 #捷運三民高中站到 捷運西湖站
-            print('每天 搭捷運 至 信義區 上下班費用 = %d NTD' % mrt)
-            mtime = 70 * 2      #走路捷運全程花費時間
-            print('每天 搭捷運 至 信義區 上下班花費時間 = %d 分鐘' % mtime)
-            cot = mrt - dcost #騎機車比搭捷運日省費用
-            print('每天 騎機車 比 搭捷運 至 信義區 上下班省費 = %.1f NTD' % cot)
-            cti = mtime - time  #騎機車比搭捷運日省時
-            print('每天 騎機車 比 搭捷運 至 信義區 上下班省時 = %d 分鐘' % cti)
-            ywork = 200       #一年預計上班日200天
-            print('一年上班天數 = 以 %d 天計算' % ywork)
-            ycot = cot * ywork #一年省錢
-            print('每年 騎機車 比 搭捷運 至 信義區 上下班省費 = %.1f NTD' % ycot)
-            ytime = cti * ywork /60 #一年省時
-            print('每年 騎機車 比 搭捷運 至 信義區 上下班省時 = %.1f 小時' % ytime)
-        elif year == 2020:
-            km = 30 #到忠孝上課公里數
-            print('每天 騎機車 至 忠孝聯成 上下課公里數 = %d公里' % km)
-            dcost = km * cpk #一天油費
-            print('每天 騎機車 至 忠孝聯成 上下課費用 = %.1f NTD' % dcost)
-            time = 40 * 2    #騎車花費時間
-            print('每天 騎機車 至 忠孝聯成 上下課花費時間 = %d 分鐘' % time)
-            mrt = 30 * 2 #捷運三民高中站到 捷運西湖站
-            print('每天 搭捷運 至 忠孝聯成 上下課費用 = %d NTD' % mrt)
-            mtime = 60 * 2      #走路捷運全程花費時間
-            print('每天 搭捷運 至 忠孝聯成 上下課花費時間 = %d 分鐘' % mtime)
-            cot = mrt - dcost #騎機車比搭捷運日省費用
-            print('每天 騎機車 比 搭捷運 至 忠孝聯成 上下課省費 = %.1f NTD' % cot)
-            cti = mtime - time  #騎機車比搭捷運日省時
-            print('每天 騎機車 比 搭捷運 至 忠孝聯成 上下課省時 = %d 分鐘' % cti)
-            ywork = 200       #一年預計上班日200天
-            print('一年上班天數 = 以 %d 天計算' % ywork)
-            ycot = cot * ywork #一年省錢
-            print('每年 騎機車 比 搭捷運 至 忠孝聯成 上下課省費 = %.1f NTD' % ycot)
-            ytime = cti * ywork / 60 #一年省時
-            print('每年 騎機車 比 搭捷運 至 忠孝聯成 上下課省時 = %.1f 小時' % ytime)
-        line = infile.readline()
-        #print('%s,%s,%.2f,%s,%.2f,%.2f,%.2f,%s,%s,%s,%.2f,%s,%.2f,%.2f \n' % (year,nowkm,lit,op,oilavg,cpk,dcost,time,mrt,mtime,cot,cti,ycot,ytime))
-        #outfile.write('%s,%s,%.2f,%s,%.2f,%.2f,%.2f,%s,%s,%s,%.2f,%s,%.2f,%.2f \n' % (year,nowkm,lit,op,oilavg,cpk,dcost,time,mrt,mtime,cot,cti,ycot,ytime))
-        #print('%.2f,%.2f,%s \n' % (ycot,ytime,year))
-        print()
-        outfile.write('%.1f,%.1f,%s \n' % (ycot,ytime,year))
+    data1 = line.split(',')
+    year = eval(data1[0]) #取出日期
+    print('年份= %s 年' % year)
+    nowkm = eval(data1[1])
+    print('年總行駛公里數 = %s 公里' % nowkm)
+    lit = eval(data1[2])   # 取出加油油價與公升數資料
+    print('年總加油公升數 = %.1f 公升' % lit)
+    op = eval(data1[3])
+    print('年總加油費用 = %s NTD' % op)
+    oilavg = nowkm / lit
+    print('平均油耗 = 每公升跑 %.1f 公里' % oilavg)
+    cpk = op / nowkm
+    print('每公里費用 = %.1f NTD' % cpk)
+    def p(a,b,c,d,e,f,g,h): 
+        ywork = a #20       #一年預計上班日20天
+        print('%s年上班天數 = 以 %d 天計算' % (h,ywork))
+        motfixcotavg = (sumcost / 2043) * b #36 
+        print('%s年平均機車維修保養稅險費用 = %.1f 元' % (h,motfixcotavg))
+        km = c #32 #到內湖公司公里數
+        print('每天 騎機車 至 內湖區 上下班公里數 = %d 公里' % km)
+        dcost = km * cpk #一天油費
+        print('每天 騎機車 至 內湖區 上下班費用 = %.1f 元' % dcost)
+        mrt = d * e * 2 #d=40 e=0.8#捷運三民高中站到 捷運西湖站
+        print('每天 搭捷運 至 內湖區 上下班費用 = %d 元' % mrt)
+        cot = mrt - dcost   #騎機車比搭捷運日省費用
+        print('每天 騎機車 比 搭捷運 至 內湖區 上下班省費 = %.1f 元' % cot)
+        ycot = (cot * ywork - motfixcotavg) #一年省錢(單位百)
+        print('%s年 騎機車 比 搭捷運 至 內湖區 上下班省費 = %.1f 元' % (h,ycot))            
+        time = f * 2    #騎車花費時間 #f =50
+        print('每天 騎機車 至 內湖區 上下班花費時間 = %d 分鐘' % time)            
+        mtime = g * 2      #走路捷運全程花費時間 #g=80
+        print('每天 搭捷運 至 內湖區 上下班花費時間 = %d 分鐘' % mtime)
+        cti = mtime - time  #騎機車比搭捷運日省時
+        print('每天 騎機車 比 搭捷運 至 內湖區 上下班省時 = %d 分鐘' % cti)
+        ytime = cti * ywork / 60 #一年省時
+        print('%s年 騎機車 比 搭捷運 至 內湖區 上下班省時 = %.1f 小時' % (h,ytime))         
+        outfile.write('%s年,%.1f,%s,%.1f \n' % (year,dcost,mrt,ycot))
+        print('%s年,%.1f,%s,%.1f \n' % (year,dcost,mrt,ycot))
+        outfile1.write('%s年,%s,%s,%.1f \n' % (year,time,mtime,ytime))
+        print('%s年,%s,%s,%.1f \n' % (year,time,mtime,ytime))
+    if year == 2014:
+        print('2014-11-26 ~ 2014-12-31')
+        p(20,36,32,40,0.8,55,80,2014) 
+    elif year == 2015:
+        print('2015-01-01 ~ 2015-12-31')
+        p(200,365,32,40,0.8,55,80,2015) 
+    elif year == 2016:
+        print('2016-01-01 ~ 2016-12-31')
+        p(200,365,32,40,0.8,55,80,2016)
+    elif year == 2017:
+        print('2017-01-01 ~ 2017-12-31')
+        p(200,365,26,35,0.8,50,70,2017)
+    elif year == 2018:
+        print('2018-01-01 ~ 2018-12-31')
+        p(200,365,26,35,0.8,50,70,2018)
+    elif year == 2019:
+        print('2019-01-01 ~ 2019-12-31')
+        p(200,365,26,35,0.8,50,70,2019)
+    elif year == 2020:
+        print('2020-01-01 ~ 2020-06-30')
+        p(100,182,30,30,1,40,60,2020)
+    line = infile.readline()   
 infile.close()
 outfile.close()
+outfile1.close()
 #=======================
-infile = open(r'C:\GitHub\python\PY-Learn\oil-project\score-new-3.csv',encoding='utf8',)
-line = infile.readline()
-outfile = open(r'C:\GitHub\python\PY-Learn\oil-project\score-new-3.txt','w', encoding = 'utf8')
-while line != '':
-        data = line.split(',')
-        year = eval(data[0]) #取出日期
-        print('年份= %s 年' % year)
-        nowkm = eval(data[1])
-        print('年總行駛公里數 = %s 公里' % nowkm)
-        lit = eval(data[2])   # 取出加油油價與公升數資料
-        print('年總加油公升數 = %.1f 公升' % lit)
-        op = eval(data[3])
-        print('年總加油費用 = %s NTD' % op)
-        oilavg = nowkm / lit
-        print('平均油耗 = 每公升跑 %.1f 公里' % oilavg)
-        cpk = op / nowkm
-        print('每公里費用 = %.1f NTD' % cpk)
-        if year == 2014:
-            print('2014-11-26 ~ 2014-12-31')
-            ywork = 20       #一年預計上班日20天
-            print('2014年上班天數 = 以 %d 天計算' % ywork)
-            motfixcotavg = (23218 / 2043) * 36 
-            print('2014年平均機車維修保養稅險費用 = %.1f NTD' % motfixcotavg)
-            km = 32 #到內湖公司公里數
-            print('每天 騎機車 至 內湖區 上下班公里數 = %d 公里' % km)
-            dcost = km * cpk #一天油費
-            print('每天 騎機車 至 內湖區 上下班費用 = %.1f NTD' % dcost)
-            mrt = 40 * 0.8 * 2 #捷運三民高中站到 捷運西湖站
-            print('每天 搭捷運 至 內湖區 上下班費用 = %d NTD' % mrt)
-            cot = mrt - dcost   #騎機車比搭捷運日省費用
-            print('每天 騎機車 比 搭捷運 至 內湖區 上下班省費 = %.1f NTD' % cot)
-            ycot = cot * ywork - motfixcotavg #一年省錢
-            print('2014年 騎機車 比 搭捷運 至 內湖區 上下班省費 = %.1f NTD' % ycot)            
-            time = 50 * 2    #騎車花費時間
-            print('每天 騎機車 至 內湖區 上下班花費時間 = %d 分鐘' % time)            
-            mtime = 80 * 2      #走路捷運全程花費時間
-            print('每天 搭捷運 至 內湖區 上下班花費時間 = %d 分鐘' % mtime)
-            cti = mtime - time  #騎機車比搭捷運日省時
-            print('每天 騎機車 比 搭捷運 至 內湖區 上下班省時 = %d 分鐘' % cti)
-            ytime = cti * ywork / 60 #一年省時
-            print('2014年 騎機車 比 搭捷運 至 內湖區 上下班省時 = %.1f 小時' % ytime)
-        elif year == 2015:
-            print('2015-01-01 ~ 2015-12-31')
-            ywork = 200       #一年預計上班日200天
-            print('2015年上班天數 = 以 %d 天計算' % ywork)
-            motfixcotavg = (23218 / 2043) * 365 
-            print('2015年平均機車維修保養稅險費用 = %.1f NTD' % motfixcotavg)
-            km = 32 #到內湖公司公里數
-            print('每天 騎機車 至 內湖區 上下班公里數 = %d 公里' % km)
-            dcost = km * cpk #一天油費
-            print('每天 騎機車 至 內湖區 上下班費用 = %.1f NTD' % dcost)
-            mrt = 40 * 0.8 * 2 #捷運三民高中站到 捷運西湖站
-            print('每天 搭捷運 至 內湖區 上下班費用 = %d NTD' % mrt)
-            cot = mrt - dcost   #騎機車比搭捷運日省費用
-            print('每天 騎機車 比 搭捷運 至 內湖區 上下班省費 = %.1f NTD' % cot)
-            ycot = cot * ywork - motfixcotavg #一年省錢
-            print('2015年 騎機車 比 搭捷運 至 內湖區 上下班省費 = %.1f NTD' % ycot) 
-            time = 50 * 2    #騎車花費時間
-            print('每天 騎機車 至 內湖區 上下班花費時間 = %d 分鐘' % time)
-            mtime = 80 * 2      #走路捷運全程花費時間
-            print('每天 搭捷運 至 內湖區 上下班花費時間 = %d 分鐘' % mtime)
-            cti = mtime - time  #騎機車比搭捷運日省時
-            print('每天 騎機車 比 搭捷運 至 內湖區 上下班省時 = %d 分鐘' % cti)
-            ytime = cti * ywork / 60 #一年省時
-            print('2015年 騎機車 比 搭捷運 至 內湖區 上下班省時 = %.1f 小時' % ytime)
-        elif year == 2016:
-            print('2016-01-01 ~ 2016-12-31')
-            ywork = 200       #一年預計上班日200天
-            print('2016年上班天數 = 以 %d 天計算' % ywork)
-            motfixcotavg = (23218 / 2043) * 365 
-            print('2016年平均機車維修保養稅險費用 = %.1f NTD' % motfixcotavg)
-            km = 32 #到內湖公司公里數
-            print('每天 騎機車 至 內湖區 上下班公里數 = %d 公里' % km)
-            dcost = km * cpk #一天油費
-            print('每天 騎機車 至 內湖區 上下班費用 = %.1f NTD' % dcost)
-            mrt = 40 * 0.8 * 2 #捷運三民高中站到 捷運西湖站
-            print('每天 搭捷運 至 內湖區 上下班費用 = %d NTD' % mrt)
-            cot = mrt - dcost   #騎機車比搭捷運日省費用
-            print('每天 騎機車 比 搭捷運 至 內湖區 上下班省費 = %.1f NTD' % cot)
-            ycot = cot * ywork - motfixcotavg #一年省錢
-            print('2016年 騎機車 比 搭捷運 至 內湖區 上下班省費 = %.1f NTD' % ycot)
-            time = 50 * 2    #騎車花費時間
-            print('每天 騎機車 至 內湖區 上下班花費時間 = %d 分鐘' % time)
-            mtime = 80 * 2      #走路捷運全程花費時間
-            print('每天 搭捷運 至 內湖區 上下班花費時間 = %d 分鐘' % mtime)
-            cti = mtime - time  #騎機車比搭捷運日省時
-            print('每天 騎機車 比 搭捷運 至 內湖區 上下班省時 = %d 分鐘' % cti)
-            ytime = cti * ywork / 60 #一年省時
-            print('2016年 騎機車 比 搭捷運 至 內湖區 上下班省時 = %.1f 小時' % ytime)        
-        elif year == 2017:
-            print('2017-01-01 ~ 2017-12-31')
-            ywork = 200       #一年預計上班日200天
-            print('2017年上班天數 = 以 %d 天計算' % ywork)
-            motfixcotavg = (23218 / 2043) * 365 
-            print('2017年平均機車維修保養稅險費用 = %.1f NTD' % motfixcotavg)
-            km = 26 #到信義公司公里數
-            print('每天 騎機車 至 信義區 上下班公里數 = %d 公里' % km)
-            dcost = km * cpk #一天油費
-            print('每天 騎機車 至 信義區 上下班費用 = %.1f NTD' % dcost)
-            mrt = 35 * 0.8 * 2 #捷運三民高中站到 捷運西湖站
-            print('每天 搭捷運 至 信義區 上下班費用 = %d NTD' % mrt)
-            cot = mrt - dcost #騎機車比搭捷運日省費用
-            print('每天 騎機車 比 搭捷運 至 信義區 上下班省費 = %.1f NTD' % cot)
-            ycot = cot * ywork - motfixcotavg #一年省錢
-            print('2017年 騎機車 比 搭捷運 至 信義區 上下班省費 = %.1f NTD' % ycot)
-            time = 50 * 2    #騎車花費時間
-            print('每天 騎機車 至 信義區 上下班花費時間 = %d 分鐘' % time)
-            mtime = 70 * 2      #走路捷運全程花費時間
-            print('每天 搭捷運 至 信義區 上下班花費時間 = %d 分鐘' % mtime)
-            cti = mtime - time  #騎機車比搭捷運日省時
-            print('每天 騎機車 比 搭捷運 至 信義區 上下班省時 = %d 分鐘' % cti)
-            ytime = cti * ywork /60 #一年省時
-            print('2017年 騎機車 比 搭捷運 至 信義區 上下班省時 = %.1f 小時' % ytime)
-        elif year == 2018:
-            print('2018-01-01 ~ 2018-12-31')
-            ywork = 200       #一年預計上班日200天
-            print('2018年上班天數 = 以 %d 天計算' % ywork)
-            motfixcotavg = (23218 / 2043) * 365 
-            print('2018年平均機車維修保養稅險費用 = %.1f NTD' % motfixcotavg)
-            km = 26 #到信義公司公里數
-            print('每天 騎機車 至 信義區 上下班公里數 = %d 公里' % km)
-            dcost = km * cpk #一天油費
-            print('每天 騎機車 至 信義區 上下班費用 = %.1f NTD' % dcost)
-            mrt = 35 * 0.8 * 2 #捷運三民高中站到 捷運西湖站
-            print('每天 搭捷運 至 信義區 上下班費用 = %d NTD' % mrt)
-            cot = mrt - dcost #騎機車比搭捷運日省費用
-            print('每天 騎機車 比 搭捷運 至 信義區 上下班省費 = %.1f NTD' % cot)
-            ycot = cot * ywork - motfixcotavg #一年省錢
-            print('2018年 騎機車 比 搭捷運 至 信義區 上下班省費 = %.1f NTD' % ycot)
-            time = 50 * 2    #騎車花費時間
-            print('每天 騎機車 至 信義區 上下班花費時間 = %d 分鐘' % time)
-            mtime = 70 * 2      #走路捷運全程花費時間
-            print('每天 搭捷運 至 信義區 上下班花費時間 = %d 分鐘' % mtime)
-            cti = mtime - time  #騎機車比搭捷運日省時
-            print('每天 騎機車 比 搭捷運 至 信義區 上下班省時 = %d 分鐘' % cti)
-            ytime = cti * ywork /60 #一年省時
-            print('2018年 騎機車 比 搭捷運 至 信義區 上下班省時 = %.1f 小時' % ytime)
-        elif year == 2019:
-            print('2019-01-01 ~ 2019-12-31')
-            ywork = 200       #一年預計上班日200天
-            print('2019年上班天數 = 以 %d 天計算' % ywork)
-            motfixcotavg = (23218 / 2043) * 365 
-            print('2019年平均機車維修保養稅險費用 = %.1f NTD' % motfixcotavg)
-            km = 26 #到信義公司公里數
-            print('每天 騎機車 至 信義區 上下班公里數 = %d 公里' % km)
-            dcost = km * cpk #一天油費
-            print('每天 騎機車 至 信義區 上下班費用 = %.1f NTD' % dcost)
-            mrt = 35 * 0.8 * 2 #捷運三民高中站到 捷運西湖站
-            print('每天 搭捷運 至 信義區 上下班費用 = %d NTD' % mrt)
-            cot = mrt - dcost #騎機車比搭捷運日省費用
-            print('每天 騎機車 比 搭捷運 至 信義區 上下班省費 = %.1f NTD' % cot)
-            ycot = cot * ywork - motfixcotavg #一年省錢
-            print('2019年 騎機車 比 搭捷運 至 信義區 上下班省費 = %.1f NTD' % ycot)
-            time = 50 * 2    #騎車花費時間
-            print('每天 騎機車 至 信義區 上下班花費時間 = %d 分鐘' % time)
-            mtime = 70 * 2      #走路捷運全程花費時間
-            print('每天 搭捷運 至 信義區 上下班花費時間 = %d 分鐘' % mtime)
-            cti = mtime - time  #騎機車比搭捷運日省時
-            print('每天 騎機車 比 搭捷運 至 信義區 上下班省時 = %d 分鐘' % cti)
-            ytime = cti * ywork /60 #一年省時
-            print('2019年 騎機車 比 搭捷運 至 信義區 上下班省時 = %.1f 小時' % ytime)
-        elif year == 2020:
-            print('2020-01-01 ~ 2020-06-30')
-            ywork = 182       #一年預計上班日200天
-            print('2020年上班天數 = 以 %d 天計算' % ywork)
-            motfixcotavg = (23218 / 2043) * 182 
-            print('2020年平均機車維修保養稅險費用 = %.1f NTD' % motfixcotavg)
-            km = 30 #到忠孝上課公里數
-            print('每天 騎機車 至 忠孝聯成 上下課公里數 = %d公里' % km)
-            dcost = km * cpk #一天油費
-            print('每天 騎機車 至 忠孝聯成 上下課費用 = %.1f NTD' % dcost)
-            mrt = 30 * 2 #捷運三民高中站到 捷運西湖站
-            print('每天 搭捷運 至 忠孝聯成 上下課費用 = %d NTD' % mrt)
-            cot = mrt - dcost #騎機車比搭捷運日省費用
-            print('每天 騎機車 比 搭捷運 至 忠孝聯成 上下課省費 = %.1f NTD' % cot)
-            ycot = cot * ywork - motfixcotavg #一年省錢
-            print('2020年 騎機車 比 搭捷運 至 忠孝聯成 上下課省費 = %.1f NTD' % ycot)
-            time = 40 * 2    #騎車花費時間
-            print('每天 騎機車 至 忠孝聯成 上下課花費時間 = %d 分鐘' % time)
-            mtime = 60 * 2      #走路捷運全程花費時間
-            print('每天 搭捷運 至 忠孝聯成 上下課花費時間 = %d 分鐘' % mtime)
-            cti = mtime - time  #騎機車比搭捷運日省時
-            print('每天 騎機車 比 搭捷運 至 忠孝聯成 上下課省時 = %d 分鐘' % cti)
-            ytime = cti * ywork / 60 #一年省時
-            print('2020年 騎機車 比 搭捷運 至 忠孝聯成 上下課省時 = %.1f 小時' % ytime)
-        line = infile.readline()
-        #print('%s,%s,%.2f,%s,%.2f,%.2f,%.2f,%s,%s,%s,%.2f,%s,%.2f,%.2f \n' % (year,nowkm,lit,op,oilavg,cpk,dcost,time,mrt,mtime,cot,cti,ycot,ytime))
-        #outfile.write('%s,%s,%.2f,%s,%.2f,%.2f,%.2f,%s,%s,%s,%.2f,%s,%.2f,%.2f \n' % (year,nowkm,lit,op,oilavg,cpk,dcost,time,mrt,mtime,cot,cti,ycot,ytime))
-        #print('%.2f,%.2f,%s \n' % (ycot,ytime,year))
-        print()
-        outfile.write('%.1f,%.1f,%s \n' % (ycot,ytime,year))
-infile.close()
-outfile.close()
 
 #=======================
-import pandas as pd
+
+#=======================
+
+#=======================
+#費用圖
+import pandas as pd  
 import matplotlib.pyplot as plt
 
-colName = ['ycot','ytime','year']
-oilcost = pd.read_csv(r'C:\GitHub\python\PY-Learn\oil-project\score-new-3.txt', encoding = 'utf8', names = colName)
+font = {'family' : 'Microsoft JhengHei','weight' : 'bold','size'  : '12'}
+plt.rc('font', **font) 
+plt.rc('axes',unicode_minus=False) #解決坐標軸負數的-號顯示問題
 
-oilcost_mean = oilcost.groupby('year', as_index = False).mean()
-oilcost_mean.plot(kind = 'bar')
-plt.xticks(oilcost_mean.index, oilcost_mean['year'], rotation = 0)
+colName = ['年度','騎機車每日費用','坐捷運每日費用','每年節省費用']
+cost = pd.read_csv(r'C:\GitHub\python\PY-Learn\oil-project\score-new-3.txt', names = colName)
+cost.set_index("年度" , inplace=True)
+fig, ax = plt.subplots()
+fig.suptitle('騎機車與坐捷運上下班費用比較表')
+ax.set_ylabel('每年節省費用')
+ax.set_xlabel('年度')
+ax2 = ax.twinx()
+ax2.set_ylabel('每日費用')
+cost['每年節省費用'].plot(ax = ax, rot = 0,kind = 'bar')
+cost['騎機車每日費用'].plot(ax = ax2, style = 'r-')
+cost['坐捷運每日費用'].plot(ax = ax2, style = 'g-')
+ax.legend(loc = 1)
+ax2.legend(loc = 6)
+
 plt.show()
 
-import pandas as pd
+#=======================
+#時間圖
+import pandas as pd  
 import matplotlib.pyplot as plt
 
-colName = ['ycot','ytime','year']
-iris = pd.read_csv(r'C:\GitHub\python\PY-Learn\oil-project\score-new-3.txt', names = colName)
+font = {'family' : 'Microsoft JhengHei','weight' : 'bold','size'  : '12'}
+plt.rc('font', **font) 
+plt.rc('axes',unicode_minus=False) #解決坐標軸負數的-號顯示問題
 
-iris['year'] = iris['year'].apply(lambda x: x.replace("Iris-",""))
-                                                  #^把標題的不需要字串用空字號取代       
-iris_mean = iris.groupby('year', as_index = False).mean()
-iris_mean.plot(kind = 'bar')
-plt.xticks(iris_mean.index, iris_mean['year'], rotation = 0)
+colName = ['年度','騎機車每日費時(分)','坐捷運每日費時(分)','每年節省時間(時)']
+cost = pd.read_csv(r'C:\GitHub\python\PY-Learn\oil-project\score-new-4.txt', names = colName)
+cost.set_index("年度" , inplace=True)
+fig, ax = plt.subplots()
+fig.suptitle('騎機車與坐捷運上下班費時比較表')
+ax.set_ylabel('每年節省時間(時)')
+ax.set_xlabel('年度')
+ax2 = ax.twinx()
+ax2.set_ylabel('每日費時')
+cost['每年節省時間(時)'].plot(ax = ax, rot = 0,kind = 'bar')
+cost['騎機車每日費時(分)'].plot(ax = ax2, style = 'r-')
+cost['坐捷運每日費時(分)'].plot(ax = ax2, style = 'g-')
+ax.legend(loc = 1)
+ax2.legend(loc = 6)
 
 plt.show()
+
+
+#======================
+import csv
+  
+
+ 
