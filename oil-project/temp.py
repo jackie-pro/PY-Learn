@@ -52,16 +52,15 @@ out_temp_file1.close()
 
 #==將政府資料開放資料 csv to json=========
 # (政府行政機關辦公日曆表.csv -> open-score-day.json )
-import pandas as pd
-
-df = pd.read_csv (r'C:\GitHub\python\PY-Learn\oil-project\temp-open-score-day.csv',encoding='utf-8')
-
-with open(r'C:\GitHub\python\PY-Learn\oil-project\open-score-day.json', 'w', encoding='utf-8') as file:
-    df.to_json(file, force_ascii=False,indent=4)
-
-df1 = pd.read_json(r'C:\GitHub\python\PY-Learn\oil-project\open-score-day.json')
-print(df1)
-
+#import pandas as pd
+#df = pd.read_csv (r'C:\GitHub\python\PY-Learn\oil-project\temp-open-score-day.csv',encoding='utf-8')
+#with open(r'C:\GitHub\python\PY-Learn\oil-project\open-score-day.json', 'w', encoding='utf-8') as file:
+#    df.to_json(file, force_ascii=False,indent=4)
+#df1 = pd.read_json(r'C:\GitHub\python\PY-Learn\oil-project\open-score-day.json')
+#print(df1)
+import csv
+import json
+import os
 csvfile = open(r'C:\GitHub\python\PY-Learn\oil-project\temp-open-score-day.csv','r', encoding = 'utf8')
 jsonfile = open(r'C:\GitHub\python\PY-Learn\oil-project\open-score-day.json','w', encoding = 'utf8')
 
@@ -73,17 +72,32 @@ jsonfile.write('[')
 for row in reader:
     json.dump(row,jsonfile ,ensure_ascii=False,indent=4) #unicode碼問題
     jsonfile.write(',\n')
-jsonfile.write(']')	
+
+
+#with open(r'C:\GitHub\python\PY-Learn\oil-project\open-score-day.json','w','rb+', encoding = 'utf8') as f:
+#    f.seek(0,2)                 
+#    size=f.tell()               
+#    f.truncate(size-1) 
+
+
+jsonfile.write(']')
 jsonfile.close()
 csvfile.close()
 
 #=======
 import json
+out_temp_file2 = open(r'C:\GitHub\python\PY-Learn\oil-project\temp-open-score-day-1.csv','w', encoding = 'utf8')
 with open(r'C:\GitHub\python\PY-Learn\oil-project\open-score-day.json', encoding = 'utf8') as jsonfile:
-
     jsondata = json.load(jsonfile)
     print(jsondata)
     for item in jsondata:
-        
+        #out_temp_file2.write(item['date'], item['isHoliday'])
         print(item['date'], item['isHoliday'])
+out_temp_file2.close()
+
+in_temp_csvfile2 = pd.read_csv(r'C:\GitHub\python\PY-Learn\oil-project\temp-open-score-day.csv', encoding = 'utf8')
+out_temp_csvfile2 = in_temp_csvfile2.groupby(['date']).sum() #合併種類的名稱，並且顯示該名稱欄位的所有數量總合
+out_temp_csvfile2.to_csv(r'C:\GitHub\python\PY-Learn\oil-project\temp-open-score-day-1.csv',encoding='utf8',)
+print(out_temp_csvfile2)
+
       

@@ -325,9 +325,6 @@ out_temp_open_score_file1.close()
 #==繪製圖表==================
 #95無鉛汽油歷史公告油價(綠) 與 自我加油油價(紅) 比較表-散點圖
 
-import pandas as pd
-import matplotlib.pyplot as plt
-
 colName3 = ['年度', '95無鉛汽油油價']
 oil = pd.read_csv(r'C:\GitHub\python\PY-Learn\oil-project\temp-score-5.csv', names = colName3)
 colName4 = ['年度', '95無鉛汽油油價']
