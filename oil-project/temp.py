@@ -41,10 +41,10 @@ while line1 != '':
     date = date.split('/')
     year = date[0]
     print('年分 = ',year)
-    isnot = data1[2]  
+    isnot = data1[2]
     print('isnot = ',isnot)
-    out_temp_file1.write('%s,%s \n' % (year,isnot))
-    print('%s,%s \n' % (year,isnot))
+    out_temp_file1.write('%s,%s\n' % (year,isnot))
+    print('%s,%s\n' % (year,isnot))
     line1 = in_score_file1.readline()
 in_score_file1.close()
 out_temp_file1.close()
@@ -52,16 +52,28 @@ out_temp_file1.close()
 
 #==將政府資料開放資料 csv to json=========
 # (政府行政機關辦公日曆表.csv -> open-score-day.json )
+import pandas as pd
+
+df = pd.read_csv (r'C:\GitHub\python\PY-Learn\oil-project\temp-open-score-day.csv',encoding='utf-8')
+
+with open(r'C:\GitHub\python\PY-Learn\oil-project\open-score-day.json', 'w', encoding='utf-8') as file:
+    df.to_json(file, force_ascii=False,indent=4)
+
+df1 = pd.read_json(r'C:\GitHub\python\PY-Learn\oil-project\open-score-day.json')
+print(df1)
+
 csvfile = open(r'C:\GitHub\python\PY-Learn\oil-project\temp-open-score-day.csv','r', encoding = 'utf8')
 jsonfile = open(r'C:\GitHub\python\PY-Learn\oil-project\open-score-day.json','w', encoding = 'utf8')
 
 fieldnames = ("date","isHoliday")
 
 reader = csv.DictReader(csvfile,fieldnames)
+
+jsonfile.write('[')
 for row in reader:
-    json.dump(row,jsonfile ,ensure_ascii=False) #unicode碼問題
-    jsonfile.write('\n')
-	
+    json.dump(row,jsonfile ,ensure_ascii=False,indent=4) #unicode碼問題
+    jsonfile.write(',\n')
+jsonfile.write(']')	
 jsonfile.close()
 csvfile.close()
 
@@ -70,8 +82,8 @@ import json
 with open(r'C:\GitHub\python\PY-Learn\oil-project\open-score-day.json', encoding = 'utf8') as jsonfile:
 
     jsondata = json.load(jsonfile)
-    
+    print(jsondata)
     for item in jsondata:
         
-        print([item['date'], item['isHoliday']])
+        print(item['date'], item['isHoliday'])
       
