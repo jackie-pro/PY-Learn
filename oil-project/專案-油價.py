@@ -107,7 +107,7 @@ out_temp_file5.close()
 # (temp-score-4.csv -> temp-score-6.csv)
 in_temp_csvfile2 = pd.read_csv(r'C:\GitHub\python\PY-Learn\oil-project\temp-score-4.csv', encoding = 'utf8')
 out_temp_csvfile2 = in_temp_csvfile2.groupby(['year']).sum() #合併種類的名稱，並且顯示該名稱欄位的所有數量總合
-out_temp_csvfile2.to_csv(r'C:\GitHub\python\PY-Learn\oil-project\temp-score-6.csv',encoding='utf8',)
+out_temp_csvfile2.to_csv(r'C:\GitHub\python\PY-Learn\oil-project\temp-score-6.csv',encoding='utf8')
 #========================= 
 #移除第一行標頭 
 # (temp-score-6.csv -> temp-score-7.csv)
