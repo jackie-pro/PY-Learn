@@ -1,3 +1,4 @@
+timestamp,weight,height,bmi,fatRate,bodyWaterRate,boneMass,metabolism,muscleRate,visceralFat,impedance
 1527812465,67.7,170,23.4,0,0,0,0,0,0,0
 1527836363,66.6,170,23,0,0,0,0,0,0,0
 1528023207,68.7,170,23.7,0,0,0,0,0,0,0
