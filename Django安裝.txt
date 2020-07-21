@@ -1,0 +1,167 @@
+Django 開發環境安裝裝
+
+Ubuntu
+1.安裝Python 
+
+#檢查python版本
+
+python3 -V 
+or
+python --version
+
+sudo apt-get install software-properties-common
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install python3.7
+
+
+2.安裝Python pip
+
+#檢查python版本
+
+pip --version
+
+
+#安装 Pip
+
+sudo apt install python3-pip 
+
+
+#安装 Pipenv
+
+pip install --user pipenv
+
+
+#使用安装好的包-測試
+
+A.建立一個py檔
+
+# ===
+import requests
+
+response = requests.get('https://httpbin.org/ip')
+
+print('Your IP is {0}'.format(response.json()['origin']))
+# ===
+
+B.執行看看
+
+pipenv run python main.py
+
+會得到：Your IP is 8.8.8.8　之類的　ＩＰ位置
+
+
+3.安裝 virtualenv
+
+pip install virtualenv
+
+
+測試看看
+
+virtualenv --version
+
+
+4.安裝虛擬環境軟體
+
+A.為專案建立一個專屬環境
+
+cd my_project_folder
+virtualenv venv
+
+virtualenv -p /usr/bin/python3.7 venv # venv 是虛擬環境的名子
+
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3.7
+
+source venv/bin/activate
+
+
+#在安裝環境中可以安裝其他的軟體
+
+pip install requests
+
+#不用虛擬環境開發時可以關閉
+
+deactivate
+
+#要刪除虛擬環境，只要刪除檔案
+
+rm -rf venv 
+
+#虛擬環境的軟體安裝列表(匯出)
+
+pip freeze > requirements.txt
+
+#虛擬環境的軟體安裝列表(匯入)
+
+pip install -r requirements.txt  
+
+
+B.創建一個虛擬環境
+
+mkvirtualenv my_project
+
+#在虛擬環境工作
+
+workon my_project
+
+#停止
+
+deactivate
+
+删除
+
+rmvirtualenv my_project
+
+================================
+windows Django
+
+===
+1.安裝Python
+
+#查版本
+python --version
+
+Windows 10 虛擬環境設置
+
+#安裝virtualenvwrapper-win比設置virtualenvwrapper更簡單，因為您不需要配置工具存放虛擬環境信息的位置（有默認值）。您需要做的就是，在命令提示符中運行以下命令：
+
+pip install virtualenvwrapper-win
+
+#現在，您可以使用mkvirtualenv命令創建新的虛擬環境
+
+===
+2.創建虛擬環境
+
+#一旦你安裝了virtualenvwrapper或virtualenvwrapper-win，那麼在所有平台上使用虛擬環境都非常相似。
+#現在，您可以使用mkvirtualenv命令創建新的虛擬環境。當此命令運行時，您將看到正在設置的環境（您看到的是略微特定​​於平台的）。
+#當命令完成時，新的虛擬環境，將處於活動狀態 - 
+
+mkvirtualenv my_django_environment
+
+#現在，您可以在虛擬環境中，安裝Django，並開始開發。
+
+===
+3.安裝Django
+
+pip install Django
+
+#查版本
+
+django-admin --version
+
+===
+4.測試網站
+
+#建立一個 test目錄，進入後:
+
+django-admin startproject mytestsite
+
+cd mytestsite
+
+#執行此server網站
+
+python manage.py runserver
+
+#即可進入網站
+
+localhost:8000
