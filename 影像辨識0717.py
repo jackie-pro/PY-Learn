@@ -1167,7 +1167,7 @@ cv.waitKey()
     
 =>方框濾波:
     可自行設定濾波結果為平均值或加總覆蓋原像素值
-    boxFilter()函數
+    boxFilter()函數:
     ->cv2.boxFilter(src,ddepth,ksize,anchor,normalize,borderType)
     src : 影像
     ddepth : 影像深度，每一像素能展示的顏色數，一般使用-1表示與原始像素採用相同的影像深度
@@ -1177,8 +1177,59 @@ cv.waitKey()
                0 : 加總，若加總超過255(最大值)，則會得到白色影像
     borderType : 變化樣式
 
+#20200723
 
+=>高思濾波:
+    每個像點尤其鄰近的像點及本身經過加權平均後計算得出，中心點加權值加強
+    遠離中心點的加權值逐漸減少，將各像點加權平均加總.
+    GaussianBlur()函數:
+    ->cv2.GaussianBlur(src,ksize,sigmaX,sigmaY,borderType)
+    src : 原影像
+    ksize : 濾波核大小(必須為奇數)
+    sigmaX : 濾波核大小在水平方向之標準差，控制加權比例(不可省略)
+    sigmaY : 濾波核大小在垂直方向之標準差，控制加權比例(可省略)
+    若sigmaX,sigmaY均為0,則:
+        sigmaX = 0.3 *[(ksize.width-1)*0.5-1]*0.8
+        sigmaX = 0.3 *[(ksize.height-1)*0.5-1]*0.8
+    
+    標準差:
+        測量一組數據之離散程度.(與平均值之分散程度)
+        較大的標準差:大部分數值與平均值之間差異較大
+        較小的標準差:大部分數值與平均值之間差異較小
+        例如:2學生 => 100分  => 平均50分 => 標準差較大
+                      0分
 
+            2學生 => 50分  => 平均50分 => 標準差較小
+                    50分
+                    
+=>中值濾波:
+    以鄰近像點的中間值取代，目前像點的像素值
+    medianBlur()函數:
+    ->cv2.medianBlur(src,ksize)
+    src : 原影像
+    ksize : 濾波核大小(必須為比1大的奇數)
+
+=>雙邊濾波:
+  考慮空間資訊及色彩資訊的濾波方法,過程中可有效保護影像中的邊緣資訊
+  bilateralFilter()函數:
+  ->cv2.bilateralFilter(src,d,sigmaColor,sigmaSpace,borderType)
+   src : 原影像
+   d : 空間距離參數，表示以目前像點為中心點之直徑,建議d=5.
+       d數越大,濾波速度越慢,雜訊較大的影像,可提高d值.
+   sigmaColor : 濾波處理時，選取的顏色差值範圍，此值決定濾波時那些像點可加入到濾波中，
+                與目前像素點差值小於sigmaColor值的像素點，可被加入到濾波.
+                sigmaColor值越大，則有越多的像素點參與濾波處理
+   sigmaSpace : 空間值，值越大，則有更多像點納入做濾波.
+
+=>自訂濾波核:
+    filter2D()函數:
+    -> cv2.filter2D(src,ddepth,kernel,anchor,delta,borderType)
+    src : 影像
+    ddepth : 影像深度，每一像素能展示的顏色數，一般使用-1表示與原始像素採用相同的影像深度
+    kernel : 濾波核大小，為通道陣列
+    anchor : 錨點，目前計算均值的點，位於該核中心點的位置，使用預設值即可(-1,-1)
+    delta : 修正值,修正濾波結果
+    borderType : 變化樣式
 
 """
 
@@ -1259,3 +1310,399 @@ r = cv.boxFilter(img,-1,(5,5),normalize=0)
 cv.imshow('img',img)
 cv.imshow('result',r)
 cv.waitKey()
+
+#20200723
+
+#ex1:
+import cv2 as cv
+img = cv.imread(r'C:\GitHub\python\PY-Learn\lena512_noisy.png',0)
+r = cv.GaussianBlur(img,(5,5),0,0)
+cv.imshow('img',img)
+cv.imshow('result',r)
+cv.waitKey()
+
+#ex2:
+import cv2 as cv
+import numpy as np
+img = cv.imread(r'C:\GitHub\python\PY-Learn\lena512_noisy.png')
+
+bl = np.hstack([cv.GaussianBlur(img,(3,3),0),cv.GaussianBlur(img,(5,5),0),cv.GaussianBlur(img,(9,9),0)])
+
+cv.imshow('img',img)
+cv.imshow('GaussianBlur',bl)
+cv.waitKey()
+
+
+#ex3:
+import cv2 as cv
+img = cv.imread(r'C:\GitHub\python\PY-Learn\lena512_noisy.png',0)
+r = cv.medianBlur(img,3)
+cv.imshow('img',img)
+cv.imshow('result',r)
+cv.waitKey()
+
+
+#ex4:
+import cv2 as cv
+import numpy as np
+import matplotlib.pyplot as plt
+img = cv.imread(r'C:\GitHub\python\PY-Learn\lena512.jpg',0)
+for i in range(8000):
+    temp_x = np.random.randint(0,img.shape[0])
+    temp_y = np.random.randint(0,img.shape[1])
+    img[temp_x][temp_y] = 255
+blur = cv.GaussianBlur(img,(5,5),0)
+plt.subplot(1,2,1),plt.imshow(img,'gray')
+plt.subplot(1,2,2),plt.imshow(blur,'gray')
+
+
+#ex5:
+import cv2 as cv
+import numpy as np
+def dot(img,n):
+    for k in range(n):
+        i = int(np.random.random() * img.shape[1]);
+        j = int(np.random.random() * img.shape[0]);
+        if img.ndim == 2: #img.ndim的大小(維度)
+            img[j,i] = 255
+        elif img.ndim == 3:
+            img[j,i,0] = 255
+            img[j,i,1] = 255
+            img[j,i,2] = 255
+    return img
+img = cv.imread(r'C:\GitHub\python\PY-Learn\lena512.jpg')
+rst = dot(img,10000)
+median = cv.medianBlur(rst,5)
+cv.imshow('dot',rst)
+cv.imshow('Median',median)
+cv.waitKey()
+
+
+#ex6:
+import cv2 as cv
+img = cv.imread(r'C:\GitHub\python\PY-Learn\lena512_noisy.png',0)
+r = cv.bilateralFilter(img,25,100,100)
+cv.imshow('img',img)
+cv.imshow('result',r)
+cv.waitKey()
+
+
+#ex7:
+import cv2 as cv
+img = cv.imread(r'C:\GitHub\python\PY-Learn\lena512_noisy.png',0)
+g = cv.GaussianBlur(img,(55,55),0,0)
+b = cv.bilateralFilter(img,55,100,100)
+cv.imshow('img',img)
+cv.imshow('Gaussian',g)
+cv.imshow('bilateral',b)
+cv.waitKey()
+
+#ex8:
+import cv2 as cv
+import numpy as np
+img = cv.imread(r'C:\GitHub\python\PY-Learn\lena512_noisy.png',0)
+kernel = np.ones((9,9),np.float32)/81
+r = cv.filter2D(img,-1,kernel)
+cv.imshow('img',img)
+cv.imshow('rst',r)
+cv.waitKey()
+
+
+
+
+"""
+邊緣偵測
+=>Canny演算法:
+    ->低錯誤率:
+          偵測的亮點大多屬於邊緣
+      定位準確:
+         標示的邊緣與實際的邊緣大致相同
+      解析度高:
+        邊緣線條細緻
+    ->應用於灰階影像:
+    ->演算法流程:
+        1.去噪:欲處理圖片，使用高斯濾波
+        2.計算影像梯度方向(影像強度，色彩方向之變化性)
+        3.非極大值抑制
+        4.確定邊緣
+        
+  ->Canny()函數:
+      cv2.Canny(src,threshold1,threshold2,opertureSize,L2gradient)
+      src : 原影像
+      threshold1 : 第一個閥值 (低)
+      threshold2 : 第二個閥值 (高)
+      opertureSize : 梯度的運算孔徑大小
+      L2gradient : 梯度幅度(預設False)
+
+
+=>使用分類器Classifier:
+    分類器:以訓練完成的各影像特徵(如人臉)，以檔案型式存在，為XML檔
+
+=>辨識方法:
+    1.自行訓練分類器(使用機器學習)
+    2.使用以訓練完成的分類器，如openCV提供之特徵分類器
+    
+    =>opencv分類器:
+        於opencv安裝資料夾中之data資料夾，包含以下的分類器:
+            Haarcascades -> haar分類器
+            HOG分類器 X 行人  紋理
+            LBP分類器 (Local Binary Pattern)->臉部比對
+    => Haar Classifier:(影像灰度變化)
+        以黑白矩形作為mask，在影像上來回覆蓋，以提取特徵(學習臉部特徵)
+        眼睛附近比臉頰附近皮膚顏色比對
+    
+    ->CascadeClassifier()函數:
+        cv2.CascadeClassifier(filename)
+        filename : 分類器檔案名稱及路徑 =>傳回的是分類器物件
+        分類器物件.detectMultiScale(src,scaleFactor,minNeighbor,flag,minSize,maxSize)
+        src : 原影像
+        scaleFactor : 縮放比例 
+        minNeighbor : 組成檢測目標的相鄰矩形最小個數(預設為3)
+        flag : 使用舊版opencv時使用此參數
+        minSize : 目標最小尺吋，小於此尺吋的目標物將被忽略
+        maxSize : 目標最大尺吋，大於此尺吋的目標物將被忽略
+               
+
+
+"""
+
+#ex9:
+import cv2 as cv
+img = cv.imread(r'C:\GitHub\python\PY-Learn\lena512.jpg',0)
+r1 = cv.Canny(img,128,200)
+r2 = cv.Canny(img,32,128)
+cv.imshow('img',img)
+cv.imshow('r1',r1)
+cv.imshow('r2',r2)
+cv.waitKey()
+
+#ex10:
+import cv2 as cv
+img = cv.imread(r'C:\GitHub\python\PY-Learn\lena512_noisy1.jpg',0)
+img = cv.GaussianBlur(img,(3,3),0)
+canny = cv.Canny(img,50,150)
+cv.imshow('img',img)
+cv.imshow('Canny',canny)
+cv.waitKey()
+
+
+
+#ex11:
+import cv2 as cv
+def CannyThreshold(lowThreshold):
+    detected_edges = cv.GaussianBlur(gray,(3,3),0)
+    detected_edges = cv.Canny(detected_edges,lowThreshold,lowThreshold*ratio,apertureSize = kernel_size)
+    dst = cv.bitwise_and(img,img,mask = detected_edges)
+    cv.imshow('canny',dst)
+lowThreshold = 0
+max_lowThreshold = 100
+ratio = 3
+kernel_size = 3
+img = cv.imread(r'C:\GitHub\python\PY-Learn\lena512.jpg')
+gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
+cv.namedWindow('canny')
+cv.createTrackbar('threshold value','canny',lowThreshold,max_lowThreshold,CannyThreshold)
+CannyThreshold(0)
+if cv.waitKey(0) == 27:
+    cv.destroyAllWindows()
+
+
+#ex12:
+import cv2 as cv
+img_original = cv.imread(r'C:\GitHub\python\PY-Learn\lena512.jpg',0)
+cv.namedWindow('Canny')
+def nothing(x):
+    pass
+cv.createTrackbar('threshold1','Canny',50,500,nothing)
+cv.createTrackbar('threshold2','Canny',100,500,nothing)
+while(1):
+    
+    threshold1 = cv.getTrackbarPos('threshold1','Canny')
+    threshold2 = cv.getTrackbarPos('threshold2','Canny')
+    
+    img_edges = cv.Canny(img_original,threshold1,threshold2)
+    
+    cv.imshow('original',img_original)
+    cv.imshow('Canny',img_edges)
+    if cv.waitKey(1) & 0xFF == 27:
+        break
+cv.destroyAllWindows()
+
+
+#ex13:
+import cv2 as cv
+img = cv.imread(r'C:\GitHub\python\PY-Learn\coin.jpg')
+gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+blur = cv.GaussianBlur(gray,(5,5),0)
+cny = cv.Canny(blur,30,150)
+cv.imshow('img',img)
+cv.imshow('gray',gray)
+cv.imshow('blur',blur)
+cv.imshow('cny',cny)
+cv.waitKey()
+
+
+#ex-1:
+import cv2 as cv
+img = cv.imread(r'C:\GitHub\python\PY-Learn\falt.jpg')
+gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+blur = cv.GaussianBlur(gray,(5,5),0)
+cny = cv.Canny(blur,30,150)
+cv.imshow('img',img)
+cv.imshow('gray',gray)
+cv.imshow('blur',blur)
+cv.imshow('cny',cny)
+cv.waitKey()
+
+
+#ex-2:
+import cv2 as cv
+img = cv.imread(r'C:\GitHub\python\PY-Learn\keybo.jpg')
+gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+blur = cv.GaussianBlur(gray,(5,5),0)
+cny = cv.Canny(blur,30,150)
+cv.imshow('img',img)
+cv.imshow('gray',gray)
+cv.imshow('blur',blur)
+cv.imshow('cny',cny)
+cv.waitKey()
+
+#ex-3:
+import cv2 as cv
+img = cv.imread(r'C:\GitHub\python\PY-Learn\pig.jpg')
+gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+blur = cv.GaussianBlur(gray,(5,5),0)
+cny = cv.Canny(blur,30,150)
+cv.imshow('img',img)
+cv.imshow('gray',gray)
+cv.imshow('blur',blur)
+cv.imshow('cny',cny)
+cv.waitKey()
+
+
+#ex-4:
+import cv2 as cv
+img = cv.imread(r'C:\GitHub\python\PY-Learn\me.jpg')
+gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+blur = cv.GaussianBlur(gray,(5,5),0)
+cny = cv.Canny(blur,30,150)
+cv.imshow('img',img)
+cv.imshow('gray',gray)
+cv.imshow('blur',blur)
+cv.imshow('cny',cny)
+cv.waitKey()
+
+
+
+#ex14:
+import numpy as np
+#import argparse
+import cv2 as cv
+image = cv.imread(r'C:\GitHub\python\PY-Learn\lena512.jpg')
+cv.imshow('Original',image)
+
+gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+cv.imshow('Gray',gray)
+lap = cv.Laplacian(gray,cv.CV_64F)
+lap = np.int8(np.absolute(lap))
+
+cv.imshow('Edge detection by Laplacaian',np.hstack([lap,gray]))
+
+if(cv.waitKey(0) == 27):
+    cv.destroyAllWindows()
+    
+    
+#ex15:
+import numpy as np
+import cv2 as cv
+image = cv.imread(r'C:\GitHub\python\PY-Learn\lena512.jpg')
+cv.imshow('Original',image)
+
+gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+cv.imshow('Gray',gray)
+
+sobelx = cv.Sobel(gray,cv.CV_64F,1,0) #sobel邊緣偵測
+sobely = cv.Sobel(gray,cv.CV_64F,0,1)
+
+sobelx = np.uint8(np.absolute(sobelx))
+sobely = np.uint8(np.absolute(sobely))
+sobelcombine = cv.bitwise_or(sobelx,sobely)
+cv.imshow('Edge detection by Sobel',np.hstack([gray,sobelx,sobely,sobelcombine]))
+
+if(cv.waitKey(0) == 27):
+    cv.destroyAllWindows()
+
+#ex16:
+import cv2 as cv
+img = cv.imread(r'C:\GitHub\python\PY-Learn\lena512.jpg')
+pict = r'C:\GitHub\python\PY-Learn\haarcascade_frontalface_default.xml'
+faceCascade = cv.CascadeClassifier(pict)
+gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
+faces = faceCascade.detectMultiScale(gray,scaleFactor=1.15,minNeighbors=7,minSize=(5,5))
+print(faces)
+print('find {0} face!'.format(len(faces)))
+
+for(x,y,w,h) in faces:
+    cv.rectangle(img,(x,y),(x+w,y+w),(0,255,0),2)
+
+cv.imshow('img',img)
+cv.waitKey()
+
+#ex16-1:
+import cv2 as cv
+img = cv.imread(r'C:\GitHub\python\PY-Learn\person_3.jpg')
+pict = r'C:\GitHub\python\PY-Learn\haarcascade_frontalface_default.xml'
+faceCascade = cv.CascadeClassifier(pict)
+gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
+faces = faceCascade.detectMultiScale(gray,scaleFactor=1.15,minNeighbors=9,minSize=(5,5))
+print(faces)                                                           #^改成大一點
+print('find {0} face!'.format(len(faces)))
+
+for(x,y,w,h) in faces:
+    cv.rectangle(img,(x,y),(x+w,y+w),(0,255,0),2)
+
+cv.imshow('img',img)
+cv.waitKey()
+
+#ex16-2:
+import cv2 as cv
+img = cv.imread(r'C:\GitHub\python\PY-Learn\person_8.jpg')
+pict = r'C:\GitHub\python\PY-Learn\haarcascade_frontalface_default.xml'
+faceCascade = cv.CascadeClassifier(pict)
+gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
+faces = faceCascade.detectMultiScale(gray,scaleFactor=1.15,minNeighbors=5,minSize=(5,5))
+print(faces)                                                           #^改成小一點
+print('find {0} face!'.format(len(faces)))
+
+for(x,y,w,h) in faces:
+    cv.rectangle(img,(x,y),(x+w,y+w),(0,255,0),2) #畫框
+
+cv.imshow('img',img)
+cv.waitKey()
+
+#ex16-3:
+import cv2 as cv
+img = cv.imread(r'C:\GitHub\python\PY-Learn\person_8.jpg')
+pict = r'C:\GitHub\python\PY-Learn\haarcascade_frontalface_default.xml'
+faceCascade = cv.CascadeClassifier(pict)
+gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
+faces = faceCascade.detectMultiScale(gray,scaleFactor=1.15,minNeighbors=5,minSize=(5,5))
+print(faces)                                                           #^改成小一點
+print('find {0} face!'.format(len(faces)))
+
+for(x,y,w,h) in faces:
+    cv.circle(img,(int((x+x+w)/2),int((y+y+h)/2)),int(w/2),(0,255,0),2) #畫圓
+
+cv.imshow('img',img)
+cv.waitKey()
+
+
+
+
+
+
+
+
+
+
+
