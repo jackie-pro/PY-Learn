@@ -2140,10 +2140,142 @@ LBPH 人臉辨識
             grid_y,列方向的像素分組單位(預設8)
             threshold ) -> 閥值(限測試用，大於該值表示沒有影像)
 
+    
+用模型執行訓練
+    為識別器模型物件   
+    
+    對影像進行計算 得到一向量值
+    cv.face.LBPHFaceRecognizer.train(src,labels)
+    src 原始影像
+    labels 每個影像對應的標籤值
+    
+    
+    cv.face.LBPHFaceRecognizer.predict(src)
+    src 辨識影像
+    
+    對人臉進行判斷 我與目前影像最接近的人臉 找到則設為標籤
+    (距離 為與 LBPH模型中之 threshold值之距離)
+    
+    傳回值 = label,confidence
+    
+    label 識別結果標籤
+    
+    confidence 可靠評分為識別結果 與 原有模型之間的距離
+    0  完全符合
+    50> 低於50 結果為比較好  
+    80< 之間 >50 很勉強接受
+    >80 不被接受
+
 
 
 """
     
+#網頁套件_專門爬股票的套件
+#https://www.twse.com.tw/zh/page/trading/exchange/STOCK_DAY.html
+
+"""
+安裝 套件
+        pip install twstock 
+
+台灣股市程式，透過 twstock 簡單的查詢 各類股票之資訊以及即時的股票狀況。
+
+#如果拒絕連線 就是因為證交所 可能收盤時間問題  等等後再重試
+
+--------------------------------------------------------------------------------
+
+
+檢視網頁 
+    F12 或是 游標 移至想找的資料->右鍵->檢查 
+    就會出來
+    
+    XHR資料 
+    XMLHttpRequest  使網頁可不在刷新的情況下 更新資料
+
+-------------------------------------------------------------------------------
+
+ex 台灣證券交易所 -> 個股日成交資訊 ->選擇一個你有興趣的 ->爬下一整年度的
+2884 玉山
+2887 台新
+2002 台積電
+2633 高鐵
+
+使用函式 
+    convertDate 民國年月日 轉成西元年月日 的字串
+    
+def convertDate(date):
+    str1 =str(date)
+    yearst =str1[:3] #取出民國年
+    ryear =str(int(yearst)+1911) #轉為西元元年
+    firdate =ryear +str1 [4:6] +str1[7:9]
+    return firdate
+    
+
+
+
+查詢時上面的標籤 network -> XHR 輸入年月查詢 -> 找到 STOCK_DAY?..
+    由上述項目 按右鍵 ->open in new tab 
+    開啟兩個視窗 去觀察網址內 json的網址 相關聯的地方 按順序
+    ....data=20190101...
+    ....data=20190201...
+    ....data=20190301... 
+
+"""
+
+#查詢股票
+import twstock 
+stock =twstock.Stock('2002')#填入股票代號
+# print('近31天的收盤價')
+# print(stock.price)#近31個 收盤價
+print('近6天的收盤價')
+print(stock.price[-6:])#利用負的 去取得
+
+
+#股價即時資料
+rel =twstock.realtime.get('2002')
+if rel['success']:
+    print('股票即時資料')
+    print(rel)
+else:
+    print('錯誤'+rel['rtmessage'])
+
+print('目前股價:')
+print(rel['realtime']['latest_trade_price'])
+#           目前時間            及時股價
+
+#==============================================================================
+#==============================================================================
+"""
+
+
+取出個股年度個月資料網址 (先去找出有規律 連續的地方可以找出資料)
+網址 分出前後 ....data=2019 "01"   前<- 從月份開始分前後 ->後 01...  
+https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=20190101&stockNo=2884&_=1595922396478
+
+
+"""
+
+
+
+def twdigit(n):#取出框框的部分 ==將月份處理為兩位
+    if (n<10):
+        rstr ='0'+str(n)
+    else:
+        rstr =str(n)
+    return rstr
+
+
+url_1 = 'https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=201901'
+url_2 ='01&stockNo=2884&_=1595922396478'
+    
+
+for i in range(1,13):
+    urlfin =url_1 +twdigit(i) +url_2
+    print(urlfin) #抓到網址
+
+
+
+
+
     
     
     
