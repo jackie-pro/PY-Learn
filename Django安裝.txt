@@ -165,3 +165,73 @@ python manage.py runserver
 #即可進入網站
 
 localhost:8000
+
+#建立APP trips
+
+python manage.py startapp trips
+
+#將新增的 Django app 加入設定檔
+
+打開 mysite/settings.py，找到 INSTALLED_APPS，調整如下：
+=======
+#打開 mysite/settings.py
+
+...
+
+# Application definition
+
+INSTALLED_APPS = (
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'trips',  <=新增進去
+)
+========
+請注意 app 之間有時候需要特定先後順序。在此，我們將自訂的 trips 加在最後面。
+
+#建立第一個 View
+
+首先建立一個名為 hello_world 的 view。
+
+========
+在 trips/views.py 輸入下列程式碼：
+
+# 打開 trips/views.py
+# 輸入下列程式碼：
+
+from django.http import HttpResponse
+
+
+def hello_world(request):
+    return HttpResponse("Hello World!")
+========
+現在我們來設定 Hello World 範例的 URL conf。
+
+首先打開 mysite/urls.py，先 import 剛剛寫的 view function：
+
+========
+# 打開 mysite/urls.py
+
+from django.conf.urls import include, url
+from django.contrib import admin
+
+# Import view functions from trips app. <=註釋
+from trips.views import hello_world  <= import進來
+
+urlpatterns = [
+    path(admin/', include(admin.site.urls)),
+    path(hello/', hello_world), <=將hello view做連結
+]
+
+========
+
+#admin 後台
+
+http://localhost:8000/admin
+
+#建立使用者 superuser
+
+python manage.py createsuperuser

@@ -1950,8 +1950,203 @@ cv2.imshow('Face_Detection',img)
 cv2.waitKey()
 
 
+#==============================================================================
+#20200728
+
+#ex1  3.6
+import dlib
+import cv2 as cv
+cap =cv.VideoCapture(r'C:\GitHub\python\PY-Learn\short_hamilton_clip.mp4')#.VideoCapture 開啟影片檔案
+width =int(cap.get(cv.CAP_PROP_FRAME_WIDTH))#把每秒影格畫面尺寸抓出 怕有小數點 所以前面放int轉整數
+height =int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
+fourcc =cv.VideoWriter_fourcc(*'XVID') #設定影片的編碼  XVID (很普及的)
+out =cv.VideoWriter(r'C:\GitHub\python\PY-Learn\output.avi', fourcc, 20.0, (width,height))
+#輸出影片檔 路徑檔名+avi格式 設定編碼 20.0==fps值 輸出時 依照每秒的影格數去做設定         
+detector =dlib.get_frontal_face_detector()
+
+while (cap.isOpened()):
+    ret ,frame =cap.read()#cap.read() 讀出影格資訊 ==單一畫面 
+    face_rects, scores, idx =detector.run(frame, 0)
+
+    for i ,d in enumerate(face_rects):#d ==人臉的左右大小
+        x1 =d.left()
+        y1 =d.top()
+        x2 =d.right()
+        y2 =d.bottom()
+        text ='%2.2f(%d)' % (scores[i],idx[i])
+        cv.rectangle(frame,(x1,y1),(x2,y2),(0,255,0),4,cv.LINE_AA)
+    
+    #標示分數
+        cv.putText(frame, text, (x1,y1), cv.FONT_HERSHEY_DUPLEX,0.7,(255,255,255),1,cv.LINE_AA)
+    out.write(frame)
+    
+    cv.imshow('Video face Detection', frame)
+    if cv.waitKey(1) &0xFF == ord('q'):
+        break
+
+cap.release()
+out.release()
+cv.destroyAllWindows()
 
 
 
+"""
+    用人臉框出 影片裡的人 就是先將影片  輸出依單一影格 並每一個每一個畫面去做處理
+    
+
+    FRS 每秒影格(畫面)數
+        Frame/s 影格(畫面) (frame per second)
+    人眼每秒可處理 10~12秒 靜態影像 ==即 <= 12fps值 人眼可分辨為靜止畫面
+    
+    16~24 fps 人眼便是為動態連續影像  即影片
+    
+    一般可分為 24 fps 標準速率 ex 電影,短片  
+              30 fps 目前大都使用這個  ex電影 電視劇 新聞
+              60 fps 運動
+        
+"""
+
+#ex2   3.6
+import dlib
+import cv2 as cv
+predictor_path =r'C:\GitHub\python\PY-Learn\shape_predictor_5_face_landmarks.dat'
+face_path =r'C:\GitHub\python\PY-Learn\face_trumpfamily.jpg'
+
+def rendrface(img,landmarks ,color =(0,255,0), radius =3):#在 landmark 上畫圓 把特徵點標示出來
+    for p in landmarks.parts():
+        cv.circle(img, (p.x,p.y), radius, color, -1)
+    
+detector =dlib.get_frontal_face_detector()#建立臉孔偵測元件
+predictor =dlib.shape_predictor(predictor_path)#建立臉孔偵測元件
+
+img =cv.imread(face_path)
+dets =detector(img,1)#偵測臉孔
+
+for k ,d in enumerate(dets):
+    shape =predictor(img,d)#讀出外觀大小
+    rendrface(img, shape) #標出特徵
+    
+cv.imshow('face-rendred', img)
+cv.waitKey()
 
 
+
+"""
+    dlib模型
+    
+    5點模型:  shape_predictor_5_face_landmarks
+    68點模型:shape_predictor_68_face_landmarks  ->模型過大 可以換使用5點模型
+    
+    可用來"校正"人臉辨識的準確度(face alignment)
+    (臉部校正後 可提高辨識精準度)
+    實作 步驟如下:
+        1.取得雙眼 左右兩點 landmarks
+        2.依landmarks 取得雙眼的中間點
+        3.取得中間點　與　水平線的角度　
+        4.重新取得較大的人臉區域 依步驟3 取得的角度旋轉 (校正)
+        5.針對旋轉後的區域 重新取得人臉 即 alignment人臉
+        
+    =>人臉特徵偵點測:face,lamdmark,setection
+     ->即人臉特徵定位:(即眼角、嘴角...)
+     ->用途:
+         1.改善人臉識別，使人臉識別演算法更有效
+         2.人臉平均:將多張人臉進行融合、形成一新的平均人臉
+         3.人臉交換:將兩張人臉進行無縫融合，形成換臉(A臉至B臉)
+         4.人臉裝扮:人臉化妝，如美顏相機，美圖秀秀...等     
+
+"""
+
+
+#ex3:
+import dlib
+import cv2 
+import imutils
+from imutils.face_utils import FaceAligner
+from imutils import face_utils
+
+predictor_path =r'C:\GitHub\python\PY-Learn\shape_predictor_5_face_landmarks.dat'
+face_path = r'C:\GitHub\python\PY-Learn\Lena_01.jpg'
+
+detector =  dlib.get_frontal_face_detector()
+predictor = dlib.shape_predictor(predictor_path)
+fa = FaceAligner(predictor,desiredFaceWidth=256)
+
+image = cv2.imread(face_path)
+image = imutils.resize(image,width=800)
+gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+
+cv2.imshow('Input',image)
+rects = detector(gray,2)
+
+for rect in rects:
+    (x,y,w,h) = face_utils.rect_to_bb(rect)
+    faceOrig = imutils.resize(image[y:y + h,x:x+w], width=256)
+    faceAligned = fa.align(image,gray,rect)
+    
+    cv2.imshow('Original',faceOrig)
+    cv2.imshow('Aligned',faceAligned)
+    cv2.waitKey()
+    
+
+
+#ex4:
+import numpy as np
+import cv2  as cv
+import dlib
+
+predictor_path =r'C:\GitHub\python\PY-Learn\shape_predictor_68_face_landmarks.dat'
+detector =  dlib.get_frontal_face_detector()
+predictor = dlib.shape_predictor(predictor_path)
+img = cv.imread(r'C:\GitHub\python\PY-Learn\person_8.jpg')
+img_gray = cv.cvtColor(image,cv2.COLOR_BGR2GRAY)
+nums = detector(img_gray,2)
+
+for i in range(len(nums)):
+    landmarks = np.matrix([[p.x,p.y]for p in predictor(img,nums[i]).parts()])
+    for idx, point in enumerate(landmarks):
+        pos = (point[0,0],point[0,1])
+        print(idx,pos)
+        cv.circle(img,pos,3,color=(0,255,0))
+        font = cv.FONT_HERSHEY_SIMPLEX
+        cv.putText(img,str(idx+1),pos,font,0.4,(0,0,255),1,cv.LINE_AA)
+
+cv.imshow('img',img)
+cv2.waitKey()    
+    
+"""
+LBPH 人臉辨識
+=>Local Binary Pattern Histogram
+  局部二值模式長條圖
+=>將像素值與其最鄰近的8個像素值逐一比對
+  若像素值 > 鄰近像素值，則得到 0
+  若像素值 < 鄰近像素值，則得到 1
+  將像素值得到的0,1值連接得到一個二進位序列值，再將二進位值轉為十進位，即為像素之LBP值
+  列如: 128   36  251
+        48   76    9
+        11  213   99
+    某像點值為76，其餘鄰近像點共8個
+         1    0    1
+         0         0
+         0    1    1    
+    由像點正上方起，順時針方向得到二進位的序列值 01011001 = 89
+    每一像點均執行以上處理'
+    
+    face.LBPHFaceRecognizer_create()函數
+    格式: (產生LBPH識別器模型)
+        cv2.face.LBPHFaceRecognizer_create(
+            rdius,半徑值(預設1)  #所有參數皆可省略
+            neighbors,鄰近像點個數(預設8)
+            grid_x,行方向的像素分組單位(預設8)
+            grid_y,列方向的像素分組單位(預設8)
+            threshold ) -> 閥值(限測試用，大於該值表示沒有影像)
+
+
+
+"""
+    
+    
+    
+    
+    
+    
+    
