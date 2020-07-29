@@ -2273,6 +2273,139 @@ for i in range(1,13):
     print(urlfin) #抓到網址
 
 
+#==============================================================================
+#20200729
+    
+    
+#01 單月的
+def convertDate(date):
+    str1 =str(date)
+    yearst =str1[:3] #取出民國年
+    ryear =str(int(yearst)+1911) #轉為西元元年
+    firdate =ryear +str1 [4:6] +str1[7:9]
+    return firdate    
+
+import requests
+import json,csv
+import pandas as pd
+import os #處理檔案的套件 文件系統
+#----------------
+# 顯示中文+製圖匯入
+from matplotlib import pyplot as plt
+font = {'family' : 'Microsoft JhengHei','weight':'bold','size':'11'}
+# family: 字型 /Microsoft JhengHei 微軟正黑體，
+# weight:字體
+plt.rc('font', **font) # 設定py的繪圖系統的字型項目
+plt.rc('axes',unicode_minus=False)#
+#----------------
+
+
+pd.options.mode.chained_assignment =None #取消顯示pandas 資料重設的警告 
+filepath =r'C:\GitHub\python\PY-Learn\stockmonth01.csv'
+
+if not os.path.isfile(filepath):#如果檔案不存在 就建立檔案 
+    url_twse ='https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=20190101&stockNo=2884&_=1595922396478'
+    res =requests.get(url_twse)#取得 json資料
+    jdata =json.loads(res.text)#解析 載入json資料
+    
+    outputf =open(filepath,'w',newline ='',encoding ='utf-8') #不要空行 所以要設定 newline =''
+    outputw =csv.writer(outputf)
+    outputw .writerow(jdata['fields'])
+    for dataline in (jdata['data']):#逐筆資料寫入 再關閉
+        outputw.writerow(dataline)
+    outputf.close()
+    
+pdstock =pd.read_csv(filepath, encoding ='utf-8')#用pd讀取
+for i in range(len(pdstock['日期'])):#讀取日期 並轉換格式
+    pdstock['日期'][i] =convertDate(pdstock['日期'][i]) 
+pdstock['日期'] =pd.to_datetime(pdstock['日期'])#轉換日期欄位 為格式
+
+pdstock.plot(kind ='line',
+             figsize =(12,6),
+             x ='日期',
+             y =['收盤價','最低價','最高價']
+             
+             )    
+#打開檔案 如有亂碼 開一個新的excel匯入字串精靈 設定空格 即可儲存
+
+'''前面的步驟為下
+
+
+    建立網址中 月份為二進位的函式
+    分析網址結構: 
+        (檢視各月份網址內容)
+        網址前段 +月份 +網址後段
+        (網址前後段皆相同 差異在月份數值)
+    程式:
+        1.列出該年度12個月的網址資料
+        2.繪製單月個股統計圖 並將依料儲存為 csv檔案
+'''
+
+
+
+#02 全年度的
+
+def twodigit(n):
+    if (n<10):
+        restr ='0' +str(n)
+    else:
+        restr =str(n)
+    return restr
+
+def convertDate(date):
+    str1 =str(date)
+    yearst =str1[:3] #取出民國年
+    ryear =str(int(yearst)+1911) #轉為西元元年
+    firdate =ryear +str1 [4:6] +str1[7:9]
+    return firdate   
+import requests
+import json,csv
+import pandas as pd
+import os #處理檔案的套件 文件系統
+import time
+#----------------
+# 顯示中文+製圖匯入
+from matplotlib import pyplot as plt
+font = {'family' : 'Microsoft JhengHei','weight':'bold','size':'11'}
+# family: 字型 /Microsoft JhengHei 微軟正黑體，
+# weight:字體
+plt.rc('font', **font) # 設定py的繪圖系統的字型項目
+plt.rc('axes',unicode_minus=False)#
+#----------------
+
+pd.options.mode.chained_assignment =None #取消顯示pandas 資料重設的警告 
+filepath =r'C:\GitHub\python\PY-Learn\stockmonth2017.csv'
+
+url_front ='https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=201901'
+url_behind ='01&stockNo=2884&_=1595922396478'
+
+
+if not os.path.isfile(filepath):#如果檔案不存在 就建立檔案 
+    for i in range(1,13):
+        url_twse =url_front +twodigit(i) +url_behind
+        res =requests.get(url_twse)#取得 json資料
+        jdata =json.loads(res.text)#解析 載入json資料
+    
+        outputf =open(filepath,'a',newline ='',encoding ='utf-8') #不要空行所以要設定 newline =''
+        outputw =csv.writer(outputf)
+        if i ==1:
+            outputw .writerow(jdata['fields'])
+        for dataline in (jdata['data']):#逐筆資料寫入 再關閉
+            outputw.writerow(dataline)
+        time.sleep(0.5)
+    outputf.close()
+    
+pdstock =pd.read_csv(filepath, encoding ='utf-8')#用pd讀取
+for i in range(len(pdstock['日期'])):#讀取日期 並轉換格式
+    pdstock['日期'][i] =convertDate(pdstock['日期'][i]) 
+pdstock['日期'] =pd.to_datetime(pdstock['日期'])#轉換日期欄位 為格式
+
+pdstock.plot(kind ='line',
+             figsize =(12,6),
+             x ='日期',
+             y =['收盤價','最低價','最高價']
+             )    
+#打開檔案 如有亂碼 開一個新的excel匯入字串精靈 設定空格 即可儲存
 
 
 
