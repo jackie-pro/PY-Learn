@@ -5,7 +5,7 @@ Created on Wed Jul 29 13:42:04 2020
 @author: Jackie
 """
 
-
+#Server 測試連線
 import socket
 HOST = '192.168.43.176'
 PORT = 8001

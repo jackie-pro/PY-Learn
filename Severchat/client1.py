@@ -5,7 +5,7 @@ Created on Wed Jul 29 13:54:21 2020
 @author: Jackie
 """
 
-
+#Client測試連線
 import socket
 
 HOST = '192.168.43.176'

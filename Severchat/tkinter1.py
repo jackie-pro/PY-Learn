@@ -4,7 +4,7 @@ Created on Wed Jul 29 17:01:14 2020
 
 @author: Jackie
 """
-
+#tkinter視窗GUI介面測試
 
 import tkinter as tk
 win=tk.Tk() #建立視窗容器物件
