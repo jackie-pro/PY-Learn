@@ -133,7 +133,7 @@ X = pd.DataFrame(diabetes.data, columns=diabetes.feature_names)
 y = pd.DataFrame(diabetes.target, columns=['MEDV'])
 #print(y)
 
-XTrain, XTest, yTrain, yTest = train_test_split(X,y,test_size = 0.33, random_state=100)
+XTrain, XTest, yTrain, yTest = train_test_split(X,y,test_size = 0.25, random_state=100)
 
 lm = LinearRegression()
 lm.fit(XTrain,yTrain)
@@ -165,7 +165,7 @@ X = pd.DataFrame(diabetes.data, columns=diabetes.feature_names)
 y = pd.DataFrame(diabetes.target, columns=['MEDV'])
 #print(y)
 
-XTrain, XTest, yTrain, yTest = train_test_split(X,y,test_size = 0.25, random_state=100)
+XTrain, XTest, yTrain, yTest = train_test_split(X,y,test_size = 0.2, random_state=100)
 
 lm = LinearRegression()
 lm.fit(XTrain,yTrain)
@@ -183,5 +183,96 @@ print('測試資料的R-squared:', lm.score(XTest,yTest))
 
 
 
+#ex4:
+from sklearn import datasets
+import pandas as pd
+from sklearn import linear_model
+from sklearn.model_selection import train_test_split
 
+
+bc= datasets.load_breast_cancer()
+
+# 1. 全資料集建立邏輯迴歸模型====================================================
+
+x=pd.DataFrame(bc.data, columns=bc.feature_names)
+target=pd.DataFrame(bc.target, columns=["cured"])
+y=target["cured"]
+
+logistic=linear_model.LogisticRegression(max_iter=3000)
+logistic.fit(x,y)
+
+pred= logistic.predict(x)
+
+print(pd.crosstab(target["cured"], pred))
+print("全資料集正確率:",logistic.score(x,y))
+allscore=logistic.score(x,y)
+# 2. 選擇5個指標製作模型=======================================================
+
+print("coef of all dataset:", logistic.coef_)
+coef=pd.DataFrame(logistic.coef_, columns=bc.feature_names).T
+coef_abs=abs(coef)
+
+# 選擇以下五個指標
+print(coef_abs.sort_values(0, ascending=False).index[0:5])
+print()
+
+# 篩選資料
+
+index5=coef_abs.sort_values(0, ascending=False).index[0:5]
+x1=x[index5]
+target=pd.DataFrame(bc.target, columns=["cured"])
+y=target["cured"]
+
+# 製作模型
+logistic=linear_model.LogisticRegression()
+logistic.fit(x1,y)
+
+pred= logistic.predict(x1)
+
+print(pd.crosstab(target["cured"], pred))
+print("5個指標資料集正確率:",logistic.score(x1,y))
+index5score=logistic.score(x1,y)
+# 3.  製作訓練測試資料集=======================================================
+
+x=pd.DataFrame(bc.data, columns=bc.feature_names)
+target=pd.DataFrame(bc.target, columns=["cured"])
+y=target["cured"]
+
+xtrain, xtest, ytrain, ytest=train_test_split(x,y, test_size=0.3,
+                                              random_state=10)
+
+logistic=linear_model.LogisticRegression(max_iter=3000)
+logistic.fit(xtrain,ytrain)
+pred_test= logistic.predict(x)
+
+print(pd.crosstab(target["cured"], pred_test))
+print("測式資料集正確率:",logistic.score(x,y))
+testscore=logistic.score(x,y)
+# 4.  決定測試何者較佳========================================================
+
+x=pd.DataFrame(bc.data, columns=bc.feature_names)
+target=pd.DataFrame(bc.target, columns=["cured"])
+y=target["cured"]
+
+def testsize(ts):
+    
+    xtrain, xtest, ytrain, ytest=train_test_split(x,y, test_size=ts,
+                                                  random_state=10)
+    
+    logistic=linear_model.LogisticRegression(max_iter=5000, dual=False)
+    logistic.fit(xtrain,ytrain)
+    pred_test= logistic.predict(x)
+    pd.crosstab(target["cured"], pred_test)
+    
+    testscore=logistic.score(x,y)
+    return testscore
+
+maxscore=0
+bestsize=0
+for i in range(99, 1,-1):
+    testscore=testsize(i/100)
+    if testscore>maxscore:
+        maxscore=testscore
+        bestsize=i/100
+print("準確率最高為 %f, 測試集比率為 %f" % (maxscore, bestsize))
 
