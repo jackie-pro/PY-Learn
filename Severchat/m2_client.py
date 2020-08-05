@@ -14,7 +14,7 @@ from tkinter import *
 address='192.168.43.176'   #服務器的ip地址
 port=9000
 buffsize=1024
-s=socket(AF_INET, SOCK_STREAM)
+s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((address,port))
  
 

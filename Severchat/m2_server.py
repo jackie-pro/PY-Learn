@@ -7,14 +7,14 @@ Created on Mon Aug  3 14:04:50 2020
 #Server
 
 from tkinter import *
-from socket import *
+import socket
 import threading
  
 
 address='192.168.43.176'
 port=9000
 buffsize=1024
-s = socket(AF_INET, SOCK_STREAM)
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((address,port))
 s.listen(5)     #最大連接數
 conn_list = []

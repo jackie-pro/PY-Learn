@@ -1,0 +1,10 @@
+查看本机所有的进行的进程
+ps -elf|grep 28018
+查看本机5000端口 进程
+netstat -tlnp|grep 28018
+
+kill -9 XXXX
+lsof -i :28018
+
+#打包exe
+pyinstaller -F m_client.py
