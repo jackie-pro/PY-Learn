@@ -6,30 +6,30 @@ Created on Mon Aug  3 14:24:07 2020
 """
 #Client
 
-from socket import *
+import socket
 import threading
-from tkinter import *
+import tkinter as tk
 
 
 address='122.116.118.222'   #服務器的ip地址
 port=9000
 buffsize=1024
-s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((address,port))
- 
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect((address,port))
+
 
 
 def recv():
     while True:
-        recvdata = s.recv(buffsize).decode('utf-8')
-        gui.listBox.insert(END, recvdata)
+        recvdata = client.recv(buffsize).decode('utf-8')
+        gui.ListBox.insert(END, recvdata)
         print('\n' + recvdata + '\n')
 
 class GUI:
     def __init__(self, root):
         self.root = root
-        self.listBox = Listbox(self.root)
-        self.listBox.pack()
+        self.ListBox = Listbox(self.root)
+        self.ListBox.pack()
         self.entry = Entry(self.root)
         self.entry.pack()
         self.sendBtn = Button(self.root, text='發送', command=self.send)
@@ -37,11 +37,11 @@ class GUI:
 
     def send(self):
         senddata = self.entry.get()
-        s.send(senddata.encode())
+        client.send(senddata.encode())
 
 def createGUI():
     global gui
-    root = Tk()
+    root = tk.Tk()
     gui = GUI(root)
     root.title('客戶端')
     root.mainloop()

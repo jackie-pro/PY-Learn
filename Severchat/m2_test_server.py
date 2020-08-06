@@ -6,7 +6,7 @@ Created on Mon Aug  3 14:04:50 2020
 """
 #Server
 
-from tkinter import *
+import tkinter
 import socket
 import threading
  
@@ -14,9 +14,9 @@ import threading
 address=''
 port=9000
 buffsize=1024
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((address,port))
-s.listen(5)     #最大連接數
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind((address,port))
+server.listen(5)     #最大連接數
 conn_list = []
 conn_dt = {}
 
@@ -44,7 +44,7 @@ def tcplink(sock,addr):
  
 def recs():
     while True:
-        clientsock,clientaddress=s.accept()
+        clientsock,clientaddress=server.accept()
         if clientaddress not in conn_list:
             conn_list.append(clientaddress)
             conn_dt[clientaddress] = clientsock
